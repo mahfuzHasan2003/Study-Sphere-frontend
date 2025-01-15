@@ -12,26 +12,26 @@ import {
    SidebarProvider,
    SidebarTrigger,
 } from "@/components/ui/sidebar";
-import GetUserRole from "@/shared/GetUserRole";
+import GetUserWithRole from "@/shared/GetUserWithRole";
 import TutorRoutes from "./DashboardRoutes/TutorRoutes";
 import AdminRoutes from "./DashboardRoutes/AdminRoutes";
 import StudentRoutes from "./DashboardRoutes/StudentRoutes";
-import { useState } from "react";
-import { AiFillHome } from "react-icons/ai";
-import { BiBookAlt } from "react-icons/bi";
-import { Button } from "@/components/ui/button";
+import { BiBookAlt, BiHomeAlt } from "react-icons/bi";
 import { Link, Outlet } from "react-router-dom";
+import { NavUser } from "@/components/nav-user";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 const DashboardLayout = () => {
-   const role = GetUserRole();
+   const userWithRole = GetUserWithRole();
    const publicRoutes = [
-      { label: "Home", href: "/", icon: AiFillHome },
+      { label: "Home", href: "/", icon: BiHomeAlt },
       { label: "All Sessions", href: "/sessions/all", icon: BiBookAlt },
    ];
    const dashboardRoutes =
-      role === "tutor"
+      userWithRole?.userRole === "tutor"
          ? TutorRoutes
-         : role === "admin"
+         : userWithRole?.userRole === "admin"
          ? AdminRoutes
          : StudentRoutes;
    return (
@@ -39,7 +39,19 @@ const DashboardLayout = () => {
          <SidebarProvider>
             <div className='flex'>
                <Sidebar>
-                  <SidebarHeader>Heyy</SidebarHeader>
+                  <SidebarHeader>
+                     <SidebarMenu>
+                        <SidebarMenuItem>
+                           <div className='text-center py-2'>
+                              <p className='font-semibold'> Study Sphere</p>
+                              <Badge variant='default'>
+                                 {userWithRole?.userRole} dashboard
+                              </Badge>
+                           </div>
+                        </SidebarMenuItem>
+                     </SidebarMenu>
+                  </SidebarHeader>
+                  <Separator />
                   <SidebarContent>
                      <SidebarGroup>
                         <SidebarGroupLabel>Public Routes</SidebarGroupLabel>
@@ -60,7 +72,8 @@ const DashboardLayout = () => {
                      </SidebarGroup>
                      <SidebarGroup>
                         <SidebarGroupLabel>
-                           {role?.charAt(0).toUpperCase() + role?.slice(1)}{" "}
+                           {userWithRole?.userRole?.charAt(0).toUpperCase() +
+                              userWithRole?.userRole?.slice(1)}{" "}
                            Routes
                         </SidebarGroupLabel>
                         <SidebarGroupContent>
@@ -79,7 +92,15 @@ const DashboardLayout = () => {
                         </SidebarGroupContent>
                      </SidebarGroup>
                   </SidebarContent>
-                  <SidebarFooter>Foot</SidebarFooter>
+                  <SidebarFooter>
+                     <NavUser
+                        user={{
+                           name: userWithRole?.userName,
+                           email: userWithRole?.userEmail,
+                           avatar: userWithRole?.userPhotoURL,
+                        }}
+                     />
+                  </SidebarFooter>
                </Sidebar>
                <div className='flex-1'>
                   <SidebarTrigger />

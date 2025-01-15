@@ -2,7 +2,7 @@ import useAuth from "@/hooks/useAuth";
 import useAxiosPublic from "@/hooks/useAxiosPublic";
 import { useEffect, useState } from "react";
 
-const GetUserRole = () => {
+const GetUserWithRole = () => {
    const axiosPublic = useAxiosPublic();
    const { user } = useAuth();
    const [role, setRole] = useState(null);
@@ -22,4 +22,4 @@ const GetUserRole = () => {
    return role;
 };
 
-export default GetUserRole;
+export default GetUserWithRole;
