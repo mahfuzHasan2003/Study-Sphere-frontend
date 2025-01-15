@@ -14,8 +14,10 @@ import useAuth from "@/hooks/useAuth";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 import DataLoader from "@/shared/DataLoader";
+import useAxiosPublic from "@/hooks/useAxiosPublic";
 
 const SignUp = () => {
+   const axiosPublic = useAxiosPublic();
    const [showPassword, setShowPassword] = useState(false);
    const {
       register,
@@ -43,19 +45,18 @@ const SignUp = () => {
    const [captchaValue, setCaptchaValue] = useState(null);
 
    const onSubmit = async (data) => {
-      console.log(data);
-      // uploading image to imagebb server
-      const imageData = { image: data.profileImage[0] };
-      const res = await axios.post(
-         `https://api.imgbb.com/1/upload?key=${
-            import.meta.env.VITE_imagebbAPI
-         }`,
-         imageData,
-         { headers: { "content-type": "multipart/form-data" } }
-      );
       // sign up
       await signUpWithEmail(data.email, data.password)
          .then(() => {
+            // uploading image to imagebb server
+            const imageData = { image: data.profileImage[0] };
+            const res = axios.post(
+               `https://api.imgbb.com/1/upload?key=${
+                  import.meta.env.VITE_imagebbAPI
+               }`,
+               imageData,
+               { headers: { "content-type": "multipart/form-data" } }
+            );
             // ipdate user profile
             updateUserProfile({
                displayName: data.name,
@@ -67,6 +68,14 @@ const SignUp = () => {
             });
             navigate("/");
             setAuthLoading(false);
+
+            // add user data to database
+            axiosPublic.post("/post-user", {
+               userName: data.name,
+               userEmail: data.email,
+               userPhotoURL: res.data.data.display_url,
+               userRole: data.role,
+            });
          })
          .catch((err) => {
             toast({

@@ -1,7 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User } from "lucide-react";
 
 const UserAvatar = ({ userName = "", imageURL = "" }) => {
    function getInitialsOfName(name) {
+      if (!name) return "";
       return name
          .split(" ")
          .slice(0, 2)
@@ -12,10 +14,12 @@ const UserAvatar = ({ userName = "", imageURL = "" }) => {
       <Avatar>
          <AvatarImage
             src={imageURL}
-            alt={userName}
+            alt={userName || "user avatar"}
             referrerPolicy='no-referrer'
          />
-         <AvatarFallback>{getInitialsOfName(userName)}</AvatarFallback>
+         <AvatarFallback>
+            {getInitialsOfName(userName) || <User />}
+         </AvatarFallback>
       </Avatar>
    );
 };

@@ -28,8 +28,8 @@ const NavBar = () => {
                <Popover>
                   <PopoverTrigger>
                      <UserAvatar
-                        userName={user?.displayName}
-                        imageURL={user?.photoURL}
+                        userName={user.displayName}
+                        imageURL={user.photoURL}
                      />
                   </PopoverTrigger>
                   <PopoverContent>

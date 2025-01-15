@@ -26,7 +26,6 @@ const SignIn = () => {
       formState: { errors },
    } = useForm();
    const onSubmit = (data) => {
-      console.log(data);
       signInWithEmail(data.email, data.password)
          .then(() => {
             toast({

@@ -4,11 +4,13 @@ import useAuth from "@/hooks/useAuth";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import useAxiosPublic from "@/hooks/useAxiosPublic";
 
 const SocialLogin = () => {
    const { signInWithGoogle } = useAuth();
    const { toast } = useToast();
    const navigate = useNavigate();
+   const axiosPublic = useAxiosPublic();
 
    return (
       <div>
@@ -23,12 +25,18 @@ const SocialLogin = () => {
                   size='iconLG'
                   onClick={() => {
                      signInWithGoogle()
-                        .then(() => {
+                        .then((result) => {
                            toast({
                               variant: "success",
                               description: "Login Successful",
                            });
                            navigate("/");
+                           axiosPublic.post("/post-user?social=true", {
+                              userName: result.user.displayName,
+                              userEmail: result.user.email,
+                              userPhotoURL: result.user.photoURL,
+                              userRole: "student",
+                           });
                         })
                         .catch((err) =>
                            toast({
