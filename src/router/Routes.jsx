@@ -4,6 +4,8 @@ import ErrorPage from "../pages/ErrorPage";
 import Home from "@/pages/Home";
 import SignIn from "@/pages/Auth/SignIn";
 import SignUp from "@/pages/Auth/SignUp";
+import DashboardLayout from "@/layouts/DashboardLayout";
+import TutorSessions from "@/pages/Dashboard/Tutor/TutorSessions";
 
 const routes = createBrowserRouter([
    {
@@ -15,12 +17,27 @@ const routes = createBrowserRouter([
             element: <Home />,
          },
          {
-            path: "/auth/signin",
+            path: "auth/signin",
             element: <SignIn />,
          },
          {
-            path: "/auth/signup",
+            path: "auth/signup",
             element: <SignUp />,
+         },
+      ],
+   },
+   {
+      path: "dashboard",
+      element: <DashboardLayout />,
+      children: [
+         // tutor pages
+         {
+            path: "/dashboard",
+            element: <h1> Dashboard Home</h1>,
+         },
+         {
+            path: "tutor-sessions",
+            element: <TutorSessions />,
          },
       ],
    },

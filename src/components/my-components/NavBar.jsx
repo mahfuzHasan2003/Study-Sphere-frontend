@@ -4,11 +4,6 @@ import { Button } from "../ui/button";
 import { ModeToggle } from "../mode-toggle";
 import UserAvatar from "@/shared/UserAvatar";
 import { useToast } from "@/hooks/use-toast";
-import {
-   Popover,
-   PopoverContent,
-   PopoverTrigger,
-} from "@/components/ui/popover";
 
 const NavBar = () => {
    const { user, signOutUser } = useAuth();
@@ -21,41 +16,43 @@ const NavBar = () => {
          <Link to='/'>
             <h4 className='text-xl md:text-2xl font-semibold'>StudySphere</h4>
          </Link>
-         <div></div>
-         <div className='flex items-center gap-2'>
+         <div className='hidden md:inline-flex items-center gap-3'>
+            <span>Dark</span>
             <ModeToggle />
+            <span>Light</span>
+         </div>
+         <div className='flex items-center gap-2'>
             {user ? (
-               <Popover>
-                  <PopoverTrigger>
-                     <UserAvatar
-                        userName={user.displayName}
-                        imageURL={user.photoURL}
-                     />
-                  </PopoverTrigger>
-                  <PopoverContent>
-                     Place content for the popover here.
-                     <Button
-                        variant='destructive'
-                        onClick={() => {
-                           signOutUser()
-                              .then(() => {
-                                 toast({
-                                    variant: "success",
-                                    description: `Logout Success!`,
-                                 });
-                                 navigate("/");
+               <>
+                  <Link to='dashboard'>
+                     <Button>Dashboard</Button>
+                  </Link>
+                  <Button
+                     variant='destructive'
+                     onClick={() => {
+                        signOutUser()
+                           .then(() => {
+                              toast({
+                                 variant: "success",
+                                 description: `Logout Success!`,
+                              });
+                              navigate("/");
+                           })
+                           .catch((err) =>
+                              toast({
+                                 variant: "error",
+                                 description: `Logout Failed : ${err.message}`,
                               })
-                              .catch((err) =>
-                                 toast({
-                                    variant: "error",
-                                    description: `Logout Failed : ${err.message}`,
-                                 })
-                              );
-                        }}>
-                        Log Out
-                     </Button>
-                  </PopoverContent>
-               </Popover>
+                           );
+                     }}
+                     className='hidden md:inline-flex'>
+                     Log Out
+                  </Button>
+                  <UserAvatar
+                     userName={user.displayName}
+                     imageURL={user.photoURL}
+                  />
+               </>
             ) : (
                <div>
                   <Link to='/auth/signin'>
