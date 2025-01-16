@@ -28,7 +28,7 @@ const TutorSessions = () => {
             rejectedCount={rejectedTutorSessions?.length}
          />
 
-         <div>
+         <div className='max-w-3xl'>
             <Tabs defaultValue='approved' className=''>
                <TabsList>
                   <TabsTrigger value='approved'>Approved Sessions</TabsTrigger>

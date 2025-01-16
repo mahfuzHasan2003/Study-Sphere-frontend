@@ -35,82 +35,80 @@ const DashboardLayout = () => {
          ? AdminRoutes
          : StudentRoutes;
    return (
-      <>
+      <div>
          <SidebarProvider>
-            <div className='flex relative'>
-               <Sidebar>
-                  <SidebarHeader>
-                     <SidebarMenu>
-                        <SidebarMenuItem>
-                           <div className='text-center py-2'>
-                              <p className='font-semibold'> Study Sphere</p>
-                              <Badge variant='default'>
-                                 {userWithRole?.userRole} dashboard
-                              </Badge>
-                           </div>
-                        </SidebarMenuItem>
-                     </SidebarMenu>
-                  </SidebarHeader>
-                  <Separator />
-                  <SidebarContent>
-                     <SidebarGroup>
-                        <SidebarGroupLabel>Public Routes</SidebarGroupLabel>
-                        <SidebarGroupContent>
-                           <SidebarMenu>
-                              {publicRoutes.map((menuIntem) => (
-                                 <SidebarMenuItem key={menuIntem.label}>
-                                    <SidebarMenuButton asChild>
-                                       <Link to={menuIntem.href}>
-                                          <menuIntem.icon />
-                                          <span>{menuIntem.label}</span>
-                                       </Link>
-                                    </SidebarMenuButton>
-                                 </SidebarMenuItem>
-                              ))}
-                           </SidebarMenu>
-                        </SidebarGroupContent>
-                     </SidebarGroup>
-                     <SidebarGroup>
-                        <SidebarGroupLabel>
-                           {userWithRole?.userRole?.charAt(0).toUpperCase() +
-                              userWithRole?.userRole?.slice(1)}{" "}
-                           Routes
-                        </SidebarGroupLabel>
-                        <SidebarGroupContent>
-                           <SidebarMenu>
-                              {dashboardRoutes.map((menuIntem) => (
-                                 <SidebarMenuItem key={menuIntem.label}>
-                                    <SidebarMenuButton asChild>
-                                       <Link to={menuIntem.href}>
-                                          <menuIntem.icon />
-                                          <span>{menuIntem.label}</span>
-                                       </Link>
-                                    </SidebarMenuButton>
-                                 </SidebarMenuItem>
-                              ))}
-                           </SidebarMenu>
-                        </SidebarGroupContent>
-                     </SidebarGroup>
-                  </SidebarContent>
-                  <SidebarFooter>
-                     <NavUser
-                        user={{
-                           name: userWithRole?.userName,
-                           email: userWithRole?.userEmail,
-                           avatar: userWithRole?.userPhotoURL,
-                        }}
-                     />
-                  </SidebarFooter>
-               </Sidebar>
-               <div className='flex-1 relative'>
-                  <SidebarTrigger />
-                  <div className='p-10 mt-10 lg:mt-0'>
-                     <Outlet />
-                  </div>
+            <Sidebar>
+               <SidebarHeader>
+                  <SidebarMenu>
+                     <SidebarMenuItem>
+                        <div className='text-center py-2'>
+                           <p className='font-semibold'> Study Sphere</p>
+                           <Badge variant='default'>
+                              {userWithRole?.userRole} dashboard
+                           </Badge>
+                        </div>
+                     </SidebarMenuItem>
+                  </SidebarMenu>
+               </SidebarHeader>
+               <Separator />
+               <SidebarContent>
+                  <SidebarGroup>
+                     <SidebarGroupLabel>Public Routes</SidebarGroupLabel>
+                     <SidebarGroupContent>
+                        <SidebarMenu>
+                           {publicRoutes.map((menuIntem) => (
+                              <SidebarMenuItem key={menuIntem.label}>
+                                 <SidebarMenuButton asChild>
+                                    <Link to={menuIntem.href}>
+                                       <menuIntem.icon />
+                                       <span>{menuIntem.label}</span>
+                                    </Link>
+                                 </SidebarMenuButton>
+                              </SidebarMenuItem>
+                           ))}
+                        </SidebarMenu>
+                     </SidebarGroupContent>
+                  </SidebarGroup>
+                  <SidebarGroup>
+                     <SidebarGroupLabel>
+                        {userWithRole?.userRole?.charAt(0).toUpperCase() +
+                           userWithRole?.userRole?.slice(1)}{" "}
+                        Routes
+                     </SidebarGroupLabel>
+                     <SidebarGroupContent>
+                        <SidebarMenu>
+                           {dashboardRoutes.map((menuIntem) => (
+                              <SidebarMenuItem key={menuIntem.label}>
+                                 <SidebarMenuButton asChild>
+                                    <Link to={menuIntem.href}>
+                                       <menuIntem.icon />
+                                       <span>{menuIntem.label}</span>
+                                    </Link>
+                                 </SidebarMenuButton>
+                              </SidebarMenuItem>
+                           ))}
+                        </SidebarMenu>
+                     </SidebarGroupContent>
+                  </SidebarGroup>
+               </SidebarContent>
+               <SidebarFooter>
+                  <NavUser
+                     user={{
+                        name: userWithRole?.userName,
+                        email: userWithRole?.userEmail,
+                        avatar: userWithRole?.userPhotoURL,
+                     }}
+                  />
+               </SidebarFooter>
+            </Sidebar>
+            <div className='flex-1'>
+               <SidebarTrigger />
+               <div className='p-10 mt-10 lg:mt-0'>
+                  <Outlet />
                </div>
             </div>
          </SidebarProvider>
-      </>
+      </div>
    );
 };
 
