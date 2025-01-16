@@ -46,10 +46,10 @@ const SignUp = () => {
 
    const onSubmit = async (data) => {
       // sign up
-      await signUpWithEmail(data.email, data.password)
+      await signUpWithEmail(data?.email, data?.password)
          .then(() => {
             // uploading image to imagebb server
-            const imageData = { image: data.profileImage[0] };
+            const imageData = { image: data?.profileImage[0] };
             const res = axios.post(
                `https://api.imgbb.com/1/upload?key=${
                   import.meta.env.VITE_imagebbAPI
@@ -59,8 +59,8 @@ const SignUp = () => {
             );
             // ipdate user profile
             updateUserProfile({
-               displayName: data.name,
-               photoURL: res.data.data.display_url,
+               displayName: data?.name,
+               photoURL: res.data?.data?.display_url,
             });
             toast({
                variant: "success",
@@ -71,10 +71,10 @@ const SignUp = () => {
 
             // add user data to database
             axiosPublic.post("/post-user", {
-               userName: data.name,
-               userEmail: data.email,
-               userPhotoURL: res.data.data.display_url,
-               userRole: data.role,
+               userName: data?.name,
+               userEmail: data?.email,
+               userPhotoURL: res?.data?.data?.display_url,
+               userRole: data?.role,
             });
          })
          .catch((err) => {

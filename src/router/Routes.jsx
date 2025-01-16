@@ -6,6 +6,7 @@ import SignIn from "@/pages/Auth/SignIn";
 import SignUp from "@/pages/Auth/SignUp";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import TutorSessions from "@/pages/Dashboard/Tutor/TutorSessions";
+import CreateStudySession from "@/pages/Dashboard/Tutor/CreateStudySession";
 
 const routes = createBrowserRouter([
    {
@@ -38,6 +39,10 @@ const routes = createBrowserRouter([
          {
             path: "tutor-sessions",
             element: <TutorSessions />,
+         },
+         {
+            path: "create-session",
+            element: <CreateStudySession />,
          },
       ],
    },

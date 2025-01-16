@@ -5,7 +5,6 @@ import { BsLayoutSidebarInset } from "react-icons/bs";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -240,7 +239,7 @@ const SidebarTrigger = React.forwardRef(
             ref={ref}
             data-sidebar='trigger'
             className={cn(
-               "flex lg:hidden gap-3 items-center px-5 py-2 rounded-md fixed right-5 top-5 border",
+               "flex lg:hidden gap-3 items-center px-5 py-2 rounded-md border sticky top-5 left-5 ml-5",
                className
             )}
             onClick={(event) => {
