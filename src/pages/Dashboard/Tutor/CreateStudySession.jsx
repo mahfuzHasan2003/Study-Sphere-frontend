@@ -1,7 +1,5 @@
-import { useForm, Controller } from "react-hook-form";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-
+import { useForm } from "react-hook-form";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,13 +10,8 @@ import {
    CardDescription,
    CardHeader,
 } from "@/components/ui/card";
-import {
-   Popover,
-   PopoverContent,
-   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import useAuth from "@/hooks/useAuth";
+import DatePickerField from "@/shared/DatePickerField";
 
 const CreateStudySession = () => {
    const { user } = useAuth();
@@ -26,12 +19,32 @@ const CreateStudySession = () => {
       register,
       handleSubmit,
       control,
+      watch,
       formState: { errors },
    } = useForm();
+
+   const [imagePreview, setImagePreview] = useState(null);
+
+   const registrationStartDate = watch("registrationStartDate");
+   const registrationEndDate = watch("registrationEndDate");
+   const classStartDate = watch("classStartDate");
 
    const onSubmit = (data) => {
       console.log(data);
       // Handle form submission
+   };
+
+   const handleImageChange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+         const reader = new FileReader();
+         reader.onloadend = () => {
+            setImagePreview(reader.result);
+         };
+         reader.readAsDataURL(file);
+      } else {
+         setImagePreview(null);
+      }
    };
 
    return (
@@ -103,12 +116,50 @@ const CreateStudySession = () => {
                               message: "Description is too short",
                            },
                         })}
-                        className='w-full'
+                        className='w-full  min-h-[150px] resize-y'
                      />
                      {errors.sessionDescription && (
                         <p className='text-sm text-red-500 mt-1'>
                            {errors.sessionDescription.message}
                         </p>
+                     )}
+                  </div>
+                  <div>
+                     <Label htmlFor='sessionImage'>
+                        Session Image <span className='text-red-500'>*</span>
+                     </Label>
+                     <Input
+                        id='sessionImage'
+                        type='file'
+                        accept='image/*'
+                        {...register("sessionImage", {
+                           required: "Session image is required",
+                           validate: {
+                              lessThan10MB: (files) =>
+                                 files[0]?.size < 10000000 || "Max 10MB",
+                              acceptedFormats: (files) =>
+                                 [
+                                    "image/jpeg",
+                                    "image/png",
+                                    "image/gif",
+                                 ].includes(files[0]?.type) ||
+                                 "Only PNG, JPEG and GIF",
+                           },
+                        })}
+                        onChange={handleImageChange}
+                        className='w-full'
+                     />
+                     {errors.sessionImage && (
+                        <p className='text-sm text-red-500 mt-1'>
+                           {errors.sessionImage.message}
+                        </p>
+                     )}
+                     {imagePreview && (
+                        <img
+                           src={imagePreview || "/placeholder.svg"}
+                           alt='Preview'
+                           className='mt-2 max-w-xs'
+                        />
                      )}
                   </div>
 
@@ -124,18 +175,21 @@ const CreateStudySession = () => {
                         label='Registration End Date'
                         control={control}
                         errors={errors}
+                        minDate={registrationStartDate}
                      />
                      <DatePickerField
                         name='classStartDate'
                         label='Class Start Date'
                         control={control}
                         errors={errors}
+                        minDate={registrationEndDate}
                      />
                      <DatePickerField
                         name='classEndDate'
                         label='Class End Date'
                         control={control}
                         errors={errors}
+                        minDate={classStartDate}
                      />
                      <div>
                         <Label htmlFor='sessionDuration'>
@@ -184,48 +238,5 @@ const CreateStudySession = () => {
       </div>
    );
 };
-
-const DatePickerField = ({ name, label, control, errors }) => (
-   <div className='flex flex-col space-y-2'>
-      <Label htmlFor={name}>
-         {label} <span className='text-red-500'>*</span>
-      </Label>
-      <Controller
-         name={name}
-         control={control}
-         rules={{ required: `${label} is required` }}
-         render={({ field }) => (
-            <Popover>
-               <PopoverTrigger asChild>
-                  <Button
-                     variant='outline'
-                     className={`w-full justify-start text-left font-normal ${
-                        !field.value && "text-muted-foreground"
-                     }`}>
-                     <CalendarIcon className='mr-2 h-4 w-4' />
-                     {field.value ? (
-                        format(field.value, "PPP")
-                     ) : (
-                        <span>Pick a date</span>
-                     )}
-                  </Button>
-               </PopoverTrigger>
-               <PopoverContent className='w-auto p-0' align='start'>
-                  <Calendar
-                     mode='single'
-                     selected={field.value}
-                     onSelect={field.onChange}
-                     disabled={(date) => date < new Date()}
-                     initialFocus
-                  />
-               </PopoverContent>
-            </Popover>
-         )}
-      />
-      {errors[name] && (
-         <p className='text-sm text-red-500'>{errors[name].message}</p>
-      )}
-   </div>
-);
 
 export default CreateStudySession;

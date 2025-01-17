@@ -103,7 +103,7 @@ const DashboardLayout = () => {
             </Sidebar>
             <div className='flex-1'>
                <SidebarTrigger />
-               <div className='p-10 mt-10 lg:mt-0'>
+               <div className='p-5 md:p-10 mt-10 lg:mt-0'>
                   <Outlet />
                </div>
             </div>
