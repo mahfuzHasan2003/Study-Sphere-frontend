@@ -15,6 +15,7 @@ import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 import DataLoader from "@/shared/DataLoader";
 import useAxiosPublic from "@/hooks/useAxiosPublic";
+import { uploadToImageBB } from "@/utilities/uploadToImageBB";
 
 const SignUp = () => {
    const axiosPublic = useAxiosPublic();
@@ -47,20 +48,13 @@ const SignUp = () => {
    const onSubmit = async (data) => {
       // sign up
       await signUpWithEmail(data?.email, data?.password)
-         .then(() => {
+         .then(async () => {
             // uploading image to imagebb server
-            const imageData = { image: data?.profileImage[0] };
-            const res = axios.post(
-               `https://api.imgbb.com/1/upload?key=${
-                  import.meta.env.VITE_imagebbAPI
-               }`,
-               imageData,
-               { headers: { "content-type": "multipart/form-data" } }
-            );
+            const photoURL = await uploadToImageBB(data?.profileImage[0]);
             // ipdate user profile
             updateUserProfile({
                displayName: data?.name,
-               photoURL: res.data?.data?.display_url,
+               photoURL,
             });
             toast({
                variant: "success",
@@ -73,7 +67,7 @@ const SignUp = () => {
             axiosPublic.post("/post-user", {
                userName: data?.name,
                userEmail: data?.email,
-               userPhotoURL: res?.data?.data?.display_url,
+               userPhotoURL: photoURL,
                userRole: data?.role,
             });
          })

@@ -12,8 +12,14 @@ import {
 } from "@/components/ui/card";
 import useAuth from "@/hooks/useAuth";
 import DatePickerField from "@/shared/DatePickerField";
+import { uploadToImageBB } from "@/utilities/uploadToImageBB";
+import useAxiosPublic from "@/hooks/useAxiosPublic";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 const CreateStudySession = () => {
+   const axiosPublic = useAxiosPublic();
+   const navigate = useNavigate();
    const { user } = useAuth();
    const {
       register,
@@ -21,17 +27,57 @@ const CreateStudySession = () => {
       control,
       watch,
       formState: { errors },
+      clearErrors,
+      setError,
    } = useForm();
-
    const [imagePreview, setImagePreview] = useState(null);
-
    const registrationStartDate = watch("registrationStartDate");
    const registrationEndDate = watch("registrationEndDate");
    const classStartDate = watch("classStartDate");
 
-   const onSubmit = (data) => {
+   const onSubmit = async (data) => {
       console.log(data);
-      // Handle form submission
+      const {
+         sessionTitle,
+         sessionDescription,
+         sessionDuration,
+         registrationStartDate,
+         registrationEndDate,
+         classStartDate,
+         classEndDate,
+      } = data;
+
+      // upload the image to imagebb
+      const sessionBannerImage = await uploadToImageBB(data.sessionImage[0]);
+
+      // post data to database
+      const { data: result } = await axiosPublic.post("/add-study-session", {
+         sessionTitle,
+         sessionDescription,
+         sessionDuration,
+         registrationStartDate,
+         registrationEndDate,
+         classStartDate,
+         classEndDate,
+         sessionBannerImage,
+         tutorName: user?.displayName,
+         tutorEmail: user?.email,
+         registrationFee: 0,
+         status: "pending",
+      });
+
+      if (result.success) {
+         toast({
+            variant: "success",
+            description: `${result.message}`,
+         });
+         navigate("/dashboard/tutor-sessions");
+      } else {
+         toast({
+            variant: "error",
+            description: `${result.message}`,
+         });
+      }
    };
 
    const handleImageChange = (e) => {
@@ -42,15 +88,20 @@ const CreateStudySession = () => {
             setImagePreview(reader.result);
          };
          reader.readAsDataURL(file);
+         clearErrors("sessionImage");
       } else {
          setImagePreview(null);
+         setError("sessionImage", {
+            type: "manual",
+            message: "Session image is required",
+         });
       }
    };
 
    return (
       <div>
          <h4 className='font-bold text-xl md:text-2xl lg:text-3xl mb-10'>
-            Create new study session
+            Create a new study session
          </h4>
          <Card className='w-full max-w-4xl'>
             <CardHeader>
