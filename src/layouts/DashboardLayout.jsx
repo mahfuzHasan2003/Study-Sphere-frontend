@@ -41,16 +41,17 @@ const DashboardLayout = () => {
                <SidebarHeader>
                   <SidebarMenu>
                      <SidebarMenuItem>
-                        <div className='text-center py-2'>
-                           <p className='font-semibold'> Study Sphere</p>
-                           <Badge variant='default'>
-                              {userWithRole?.userRole} dashboard
-                           </Badge>
+                        <div className='py-6 px-6 bg-gradient-to-b from-purple-600 to-blue-500 dark:from-purple-700 dark:to-blue-600 text-white rounded-lg'>
+                           <p className='text-3xl font-semibold'>
+                              Study Sphere
+                           </p>
+                           <p className='text-sm text-gray-200 mt-2'>
+                              Welcome, {userWithRole?.userRole}
+                           </p>
                         </div>
                      </SidebarMenuItem>
                   </SidebarMenu>
                </SidebarHeader>
-               <Separator />
                <SidebarContent>
                   {/* Public routes */}
                   <SidebarGroup>

@@ -8,6 +8,7 @@ import DashboardLayout from "@/layouts/DashboardLayout";
 import TutorSessions from "@/pages/Dashboard/Tutor/TutorSessions";
 import CreateStudySession from "@/pages/Dashboard/Tutor/CreateStudySession";
 import CreateOrManageNotes from "@/pages/Dashboard/Student/CreateOrManageNotes";
+import AllUsers from "@/pages/Dashboard/Admin/AllUsers";
 
 const routes = createBrowserRouter([
    {
@@ -55,6 +56,10 @@ const routes = createBrowserRouter([
          },
 
          // admin routes
+         {
+            path: "users/all",
+            element: <AllUsers />,
+         },
       ],
    },
    {

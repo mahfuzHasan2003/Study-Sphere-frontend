@@ -239,7 +239,7 @@ const SidebarTrigger = React.forwardRef(
             ref={ref}
             data-sidebar='trigger'
             className={cn(
-               "flex lg:hidden gap-3 items-center px-5 py-2 rounded-md border sticky top-5 left-5 ml-5",
+               "flex lg:hidden gap-3 items-center px-5 py-2 rounded-md border sticky top-5 left-5 ml-5 bg-secondary",
                className
             )}
             onClick={(event) => {
@@ -247,7 +247,7 @@ const SidebarTrigger = React.forwardRef(
                toggleSidebar();
             }}
             {...props}>
-            <span className='font-semibold uppercase'>Toogle Sidebar</span>
+            <span className='font-semibold uppercase'>toggle Sidebar</span>
             <BsLayoutSidebarInset size={25} />
          </button>
       );
