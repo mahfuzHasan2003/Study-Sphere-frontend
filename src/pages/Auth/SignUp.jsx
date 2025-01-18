@@ -11,7 +11,6 @@ import SocialLogin from "@/shared/SocialLogin";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
-import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 import DataLoader from "@/shared/DataLoader";
 import useAxiosPublic from "@/hooks/useAxiosPublic";

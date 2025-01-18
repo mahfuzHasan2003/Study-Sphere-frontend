@@ -7,6 +7,7 @@ import SignUp from "@/pages/Auth/SignUp";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import TutorSessions from "@/pages/Dashboard/Tutor/TutorSessions";
 import CreateStudySession from "@/pages/Dashboard/Tutor/CreateStudySession";
+import CreateOrManageNotes from "@/pages/Dashboard/Student/CreateOrManageNotes";
 
 const routes = createBrowserRouter([
    {
@@ -31,11 +32,19 @@ const routes = createBrowserRouter([
       path: "dashboard",
       element: <DashboardLayout />,
       children: [
-         // tutor pages
+         // dashboard welcome page
          {
             path: "/dashboard",
             element: <h1> Dashboard Home</h1>,
          },
+
+         // student routes
+         {
+            path: "notes/manage",
+            element: <CreateOrManageNotes />,
+         },
+
+         // tutor routes
          {
             path: "tutor-sessions",
             element: <TutorSessions />,
@@ -44,6 +53,8 @@ const routes = createBrowserRouter([
             path: "create-session",
             element: <CreateStudySession />,
          },
+
+         // admin routes
       ],
    },
    {

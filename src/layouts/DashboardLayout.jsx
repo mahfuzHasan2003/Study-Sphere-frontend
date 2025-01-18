@@ -52,6 +52,7 @@ const DashboardLayout = () => {
                </SidebarHeader>
                <Separator />
                <SidebarContent>
+                  {/* Public routes */}
                   <SidebarGroup>
                      <SidebarGroupLabel>Public Routes</SidebarGroupLabel>
                      <SidebarGroupContent>
@@ -69,10 +70,11 @@ const DashboardLayout = () => {
                         </SidebarMenu>
                      </SidebarGroupContent>
                   </SidebarGroup>
+                  {/* private routes */}
                   <SidebarGroup>
                      <SidebarGroupLabel>
                         {userWithRole?.userRole?.charAt(0).toUpperCase() +
-                           userWithRole?.userRole?.slice(1)}{" "}
+                           userWithRole?.userRole?.slice(1)}
                         Routes
                      </SidebarGroupLabel>
                      <SidebarGroupContent>

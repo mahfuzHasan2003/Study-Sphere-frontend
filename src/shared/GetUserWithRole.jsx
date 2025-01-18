@@ -17,7 +17,6 @@ const GetUserWithRole = () => {
       };
       fetchUserRole();
    }, [axiosPublic, user?.email]);
-   console.log(role);
 
    return role;
 };
