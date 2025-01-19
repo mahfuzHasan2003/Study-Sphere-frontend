@@ -103,7 +103,7 @@ const AllUsers = () => {
    };
 
    return (
-      <div className='container mx-auto py-8 space-y-6'>
+      <div>
          <h4 className='font-bold text-xl md:text-2xl lg:text-3xl my-10'>
             View and manage all users
          </h4>

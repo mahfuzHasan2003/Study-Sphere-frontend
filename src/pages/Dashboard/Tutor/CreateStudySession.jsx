@@ -75,7 +75,7 @@ const CreateStudySession = () => {
       } else {
          toast({
             variant: "error",
-            description: `${result.message}`,
+            description: `Error: ${result.message}`,
          });
       }
    };

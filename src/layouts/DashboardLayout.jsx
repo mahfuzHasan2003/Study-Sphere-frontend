@@ -16,17 +16,16 @@ import GetUserWithRole from "@/shared/GetUserWithRole";
 import TutorRoutes from "./DashboardRoutes/TutorRoutes";
 import AdminRoutes from "./DashboardRoutes/AdminRoutes";
 import StudentRoutes from "./DashboardRoutes/StudentRoutes";
-import { BiBookAlt, BiHomeAlt } from "react-icons/bi";
+import { BiHomeAlt } from "react-icons/bi";
 import { Link, Outlet } from "react-router-dom";
 import { NavUser } from "@/components/nav-user";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { GiTeacher } from "react-icons/gi";
 
 const DashboardLayout = () => {
    const userWithRole = GetUserWithRole();
    const publicRoutes = [
       { label: "Home", href: "/", icon: BiHomeAlt },
-      { label: "All Sessions", href: "/sessions/all", icon: BiBookAlt },
+      { label: "All Sessions", href: "/sessions/all", icon: GiTeacher },
    ];
    const dashboardRoutes =
       userWithRole?.userRole === "tutor"
@@ -105,7 +104,7 @@ const DashboardLayout = () => {
                </SidebarFooter>
             </Sidebar>
             <div className='flex-1'>
-               <SidebarTrigger />
+               <SidebarTrigger className='z-20' />
                <div className='p-5 md:p-10 mt-10 lg:mt-0'>
                   <Outlet />
                </div>
