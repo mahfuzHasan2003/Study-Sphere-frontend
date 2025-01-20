@@ -74,7 +74,7 @@ const DashboardLayout = () => {
                   <SidebarGroup>
                      <SidebarGroupLabel>
                         {userWithRole?.userRole?.charAt(0).toUpperCase() +
-                           userWithRole?.userRole?.slice(1)}
+                           userWithRole?.userRole?.slice(1)}{" "}
                         Routes
                      </SidebarGroupLabel>
                      <SidebarGroupContent>

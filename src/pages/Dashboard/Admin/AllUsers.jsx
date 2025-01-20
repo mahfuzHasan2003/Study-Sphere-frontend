@@ -107,7 +107,7 @@ const AllUsers = () => {
          <h4 className='font-bold text-xl md:text-2xl lg:text-3xl my-10'>
             View and manage all users
          </h4>
-         <div className='flex flex-col sm:flex-row gap-4'>
+         <div className='flex flex-col sm:flex-row gap-4 mb-5'>
             <div className='flex-1'>
                <Input
                   placeholder='Search by name or email...'
@@ -248,6 +248,9 @@ const AllUsers = () => {
                   )}
                </TableBody>
             </Table>
+            {users.length < 1 && !isLoading ? (
+               <p className='text-center text-red-500 py-5'>No data found.</p>
+            ) : null}
          </div>
       </div>
    );

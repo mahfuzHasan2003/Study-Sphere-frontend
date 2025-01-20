@@ -40,12 +40,17 @@ import { useFetchForGet } from "@/hooks/useFetchForGet";
 import { FaCheck, FaTimes, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import { Skeleton } from "@/components/ui/skeleton";
 import useAxiosPublic from "@/hooks/useAxiosPublic";
+import { convertToHoursAndMinutes } from "@/utilities/convertToHoursAndMinutes";
+import { format } from "date-fns";
 
 const ManageAllStudySessions = () => {
    const [currentPage, setCurrentPage] = useState(1);
    const [totalPages, setTotalPages] = useState(1);
    const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
    const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+   const [isShowDetailsModalOpen, setIsShowDetailsModalOpen] = useState(false);
+   const [isDeleteApprovedModalOpen, setIsDeleteApprovedModalOpen] =
+      useState(false);
    const [selectedSession, setSelectedSession] = useState(null);
    const [sessionFee, setSessionFee] = useState(0);
    const [isSessionPaid, setIsSessionPaid] = useState(false);
@@ -69,22 +74,7 @@ const ManageAllStudySessions = () => {
       data: approvedSessions = [],
    } = useFetchForGet(["approvedSessions"], "/approved-sessions");
 
-   //    const fetchSessions = async () => {
-   //       try {
-   //          const pendingResponse = await fetch("/api/pending-sessions");
-   //          const pendingData = await pendingResponse.json();
-   //          setPendingSessions(pendingData);
-
-   //          const approvedResponse = await fetch(
-   //             `/api/approved-sessions?page=${currentPage}&limit=10`
-   //          );
-   //          const approvedData = await approvedResponse.json();
-   //          setApprovedSessions(approvedData.sessions);
-   //          setTotalPages(approvedData.totalPages);
-   //       } catch (error) {
-   //          console.error("Error fetching sessions:", error);
-   //       }
-   //    };
+   // `/api/approved-sessions?page=${currentPage}&limit=10`;
 
    const TableSkeleton = () => (
       <>
@@ -108,15 +98,6 @@ const ManageAllStudySessions = () => {
          ))}
       </>
    );
-
-   const handleViewDetails = () => {
-      //
-   };
-
-   const handleReject = () => {
-      // setSelectedSession(session);
-      setIsRejectModalOpen(true);
-   };
 
    // cpnfirm approve session
    const confirmApprove = async () => {
@@ -171,14 +152,29 @@ const ManageAllStudySessions = () => {
       setIsRejectModalOpen(false);
    };
 
-   const handleUpdate = async (session) => {
-      // Implement update logic here
-      console.log("Update session:", session);
+   // TODO: implement functionality
+   const handleUpdate = async () => {
+      console.log("Update session:", selectedSession);
    };
 
-   const handleDelete = async (session) => {
-      // Implement delete logic here
-      console.log("Delete session:", session);
+   // delete session
+   const confirmDelete = async () => {
+      const { data: result } = await axiosPublic.delete(
+         `/delete-session-by-admin/${selectedSession._id}`
+      );
+      if (result?.success) {
+         toast({
+            variant: "success",
+            description: `${result.message}`,
+         });
+         refetchApprovedData();
+      } else {
+         toast({
+            variant: "error",
+            description: `${result.message}`,
+         });
+      }
+      setIsDeleteApprovedModalOpen(false);
    };
 
    const renderSessionTable = (sessions, isPending) => (
@@ -209,7 +205,10 @@ const ManageAllStudySessions = () => {
                            <>
                               <Button
                                  variant='outline'
-                                 onClick={() => setSelectedSession(session)}>
+                                 onClick={() => {
+                                    setSelectedSession(session);
+                                    setIsShowDetailsModalOpen(true);
+                                 }}>
                                  <FaEye />
                               </Button>
                               <Button
@@ -234,12 +233,24 @@ const ManageAllStudySessions = () => {
                         ) : (
                            <>
                               <Button
+                                 variant='outline'
+                                 onClick={() => {
+                                    setSelectedSession(session);
+                                    setIsShowDetailsModalOpen(true);
+                                 }}>
+                                 <FaEye />
+                              </Button>
+                              {/* TODO: btn for handling update session */}
+                              <Button
                                  onClick={() => setSelectedSession(session)}>
                                  <FaEdit />
                               </Button>
                               <Button
                                  variant='destructive'
-                                 onClick={() => setSelectedSession(session)}>
+                                 onClick={() => {
+                                    setSelectedSession(session);
+                                    setIsDeleteApprovedModalOpen(true);
+                                 }}>
                                  <FaTrash />
                               </Button>
                            </>
@@ -312,7 +323,7 @@ const ManageAllStudySessions = () => {
             </TabsContent>
          </Tabs>
 
-         {/* dialog for approve session */}
+         {/* dialog for approve pending session */}
          <Dialog open={isApproveModalOpen} onOpenChange={setIsApproveModalOpen}>
             <DialogContent>
                <DialogHeader>
@@ -338,7 +349,9 @@ const ManageAllStudySessions = () => {
                   </div>
                   {isSessionPaid && (
                      <div className='flex gap-2 items-center'>
-                        <label className='min-w-32'>Session Fee:</label>
+                        <label className='min-w-32'>
+                           Session Fee: <span className='text-red-500'>*</span>
+                        </label>
                         <Input
                            type='number'
                            onChange={(e) => setSessionFee(e.target.value)}
@@ -360,7 +373,7 @@ const ManageAllStudySessions = () => {
             </DialogContent>
          </Dialog>
 
-         {/* dialog for reject session */}
+         {/* dialog for reject pending session */}
          <Dialog open={isRejectModalOpen} onOpenChange={setIsRejectModalOpen}>
             <DialogContent>
                <DialogHeader>
@@ -368,7 +381,10 @@ const ManageAllStudySessions = () => {
                </DialogHeader>
                <DialogDescription className='grid gap-2'>
                   <div className='flex items-center md:gap-4'>
-                     <label className='min-w-32'>Rejection Reason:</label>
+                     <label className='min-w-32'>
+                        Rejection Reason:{" "}
+                        <span className='text-red-500'>*</span>
+                     </label>
                      <Select onValueChange={setRejectionReason}>
                         <SelectTrigger>
                            <SelectValue placeholder='Select reason' />
@@ -388,7 +404,9 @@ const ManageAllStudySessions = () => {
                      </Select>
                   </div>
                   <div className='flex items-center md:gap-4'>
-                     <label className='min-w-32'>Feedback:</label>
+                     <label className='min-w-32'>
+                        Feedback:<span className='text-red-500'>*</span>
+                     </label>
                      <Textarea
                         value={rejectionFeedback}
                         onChange={(e) => setRejectionFeedback(e.target.value)}
@@ -402,6 +420,122 @@ const ManageAllStudySessions = () => {
                      variant='destructive'
                      disabled={!rejectionFeedback || !rejectionReason}>
                      Reject
+                  </Button>
+               </DialogFooter>
+            </DialogContent>
+         </Dialog>
+
+         {/* dialog for show details of pending session */}
+         <Dialog
+            open={isShowDetailsModalOpen}
+            onOpenChange={setIsShowDetailsModalOpen}>
+            <DialogContent>
+               <DialogHeader>
+                  <DialogTitle>Session Details</DialogTitle>
+               </DialogHeader>
+               <DialogDescription className='grid gap-1'>
+                  <p className='mb-3'>
+                     <span className='font-bold'>Tutor Email:</span>{" "}
+                     {selectedSession?.tutorEmail}
+                  </p>
+                  <img
+                     src={selectedSession?.sessionBannerImage}
+                     alt='Banner Image'
+                     loading='lazy'
+                     className='max-h-40 mx-auto'
+                  />
+                  {selectedSession?.requestAttempt ? (
+                     <p>
+                        <span className='font-bold text-cyan-500'>
+                           Request Attempt:
+                        </span>{" "}
+                        {selectedSession?.requestAttempt === 1
+                           ? "First time"
+                           : "Last chance (review request)"}
+                     </p>
+                  ) : null}
+                  {selectedSession?.rejectionFeedback ? (
+                     <p>
+                        <span className='font-bold'>
+                           Previos Admin Feedback:
+                        </span>{" "}
+                        {selectedSession?.rejectionFeedback}
+                     </p>
+                  ) : null}
+                  <p>
+                     <span className='font-semibold'>Session Title:</span>{" "}
+                     {selectedSession?.sessionTitle}
+                  </p>
+                  <p>
+                     <span className='font-semibold'>Session Description:</span>{" "}
+                     {selectedSession?.sessionDescription}
+                  </p>
+                  <p>
+                     <span className='font-semibold'>Registration Start:</span>{" "}
+                     {format(
+                        new Date(
+                           selectedSession?.registrationStartDate || null
+                        ),
+                        "dd MMM yyyy"
+                     )}
+                  </p>
+                  <p>
+                     <span className='font-semibold'>Registration End:</span>{" "}
+                     {format(
+                        new Date(selectedSession?.registrationEndDate || null),
+                        "dd MMM yyyy"
+                     )}
+                  </p>
+                  <p>
+                     <span className='font-semibold'>Class Start:</span>{" "}
+                     {format(
+                        new Date(selectedSession?.classStartDate || null),
+                        "dd MMM yyyy"
+                     )}
+                  </p>
+                  <p>
+                     <span className='font-semibold'>Class End:</span>{" "}
+                     {format(
+                        new Date(selectedSession?.classEndDate || null),
+                        "dd MMM yyyy"
+                     )}
+                  </p>
+                  <p>
+                     <span className='font-semibold'>Session Duration:</span>{" "}
+                     {convertToHoursAndMinutes(
+                        selectedSession?.sessionDuration
+                     )}
+                  </p>
+               </DialogDescription>
+               <DialogFooter>
+                  <Button
+                     variant='secondary'
+                     onClick={() => setIsShowDetailsModalOpen(false)}>
+                     Close
+                  </Button>
+               </DialogFooter>
+            </DialogContent>
+         </Dialog>
+
+         {/* dialog for delete approved session */}
+         <Dialog
+            open={isDeleteApprovedModalOpen}
+            onOpenChange={setIsDeleteApprovedModalOpen}>
+            <DialogContent>
+               <DialogHeader>
+                  <DialogTitle>Delete Session</DialogTitle>
+               </DialogHeader>
+               <DialogDescription>
+                  Are you sure you want to delete the session?
+               </DialogDescription>
+               <DialogFooter>
+                  <Button
+                     onClick={() => setIsDeleteApprovedModalOpen(false)}
+                     variant='outline'>
+                     Cancel
+                  </Button>
+                  <Button onClick={confirmDelete} variant='destructive'>
+                     Confirm
                   </Button>
                </DialogFooter>
             </DialogContent>
