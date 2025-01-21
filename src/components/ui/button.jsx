@@ -22,7 +22,7 @@ const buttonVariants = cva(
             warning:
                "bg-yellow-600 text-white shadow-lg hover:bg-yellow-500 rounded-md px-4 py-2 font-semibold transition-colors duration-200",
             success:
-               "bg-green-500 text-white shadow-lg hover:bg-green-400 rounded-md px-4 py-2 font-semibold transition-colors duration-200",
+               "bg-green-600 text-white shadow-lg hover:bg-green-500 rounded-md px-4 py-2 font-semibold transition-colors duration-200",
          },
          size: {
             default: "h-9 px-4 py-2",

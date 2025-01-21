@@ -79,7 +79,7 @@ const StudySessionCard = ({ session }) => {
             </div>
          </CardContent>
          <CardFooter className='flex-grow'>
-            <Button asChild className='w-full mt-auto'>
+            <Button asChild className='w-full mt-auto' variant='secondary'>
                <Link to={`/session-details/${session._id}`}>Read More</Link>
             </Button>
          </CardFooter>

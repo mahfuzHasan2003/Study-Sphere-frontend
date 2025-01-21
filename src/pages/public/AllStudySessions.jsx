@@ -69,7 +69,7 @@ const AllStudySessions = () => {
                   </div>
                </CardContent>
                <CardFooter>
-                  <Button asChild className='w-full'>
+                  <Button asChild className='w-full' variant='secondary'>
                      <Skeleton className='w-full h-10' />
                   </Button>
                </CardFooter>
