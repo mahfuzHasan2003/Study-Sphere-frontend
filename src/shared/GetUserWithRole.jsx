@@ -6,6 +6,7 @@ const GetUserWithRole = () => {
    const axiosPublic = useAxiosPublic();
    const { user } = useAuth();
    const [role, setRole] = useState(null);
+   // TODO: make some update here
    useEffect(() => {
       const fetchUserRole = async () => {
          if (user?.email) {

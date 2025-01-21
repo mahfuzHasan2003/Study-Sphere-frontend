@@ -145,8 +145,14 @@ const TutorSessions = () => {
                                     )}
                                  </TableCell>
                                  <TableCell className='text-right'>
-                                    {/* TODO: link with details page */}
-                                    <Button variant='secondary'>
+                                    <Button
+                                       variant='secondary'
+                                       onClick={() =>
+                                          window.open(
+                                             `/session-details/${session._id}`,
+                                             "_blank"
+                                          )
+                                       }>
                                        View Details
                                     </Button>
                                  </TableCell>

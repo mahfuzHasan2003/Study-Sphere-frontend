@@ -36,7 +36,6 @@ const CreateStudySession = () => {
    const classStartDate = watch("classStartDate");
 
    const onSubmit = async (data) => {
-      console.log(data);
       const {
          sessionTitle,
          sessionDescription,

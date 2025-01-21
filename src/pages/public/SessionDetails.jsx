@@ -7,13 +7,18 @@ import { Button } from "@/components/ui/button";
 import { useFetchForGet } from "@/hooks/useFetchForGet";
 import { convertToHoursAndMinutes } from "@/utilities/convertToHoursAndMinutes";
 import { Skeleton } from "@/components/ui/skeleton";
+import GetUserWithRole from "@/shared/GetUserWithRole";
+import useAuth from "@/hooks/useAuth";
 
 const SessionDetails = () => {
    const { id } = useParams();
+   const user = GetUserWithRole();
+   const { authLoading } = useAuth();
 
    const { data: session = {}, isLoading } = useFetchForGet(
       ["SessionDetails", id],
       `/get-session-details/${id}`
+      // { enabled: !!user?.userRole }
    );
 
    const isRegistrationOpen =
@@ -70,15 +75,12 @@ const SessionDetails = () => {
             {/* Tutor Profile */}
             <div>
                <Card>
-                  <CardContent className='p-6'>
-                     <div className='flex items-center mb-4'>
-                        <Skeleton className='w-16 h-16 rounded-full mr-4' />
-                        <div>
-                           <Skeleton className='w-32 h-5 mb-2' />
-                           <Skeleton className='w-24 h-4' />
-                        </div>
+                  <CardContent className='p-6 flex items-center'>
+                     <Skeleton className='w-16 h-16 rounded-full mr-4' />
+                     <div>
+                        <Skeleton className='w-32 h-5 mb-2' />
+                        <Skeleton className='w-24 h-4' />
                      </div>
-                     <Skeleton className='w-full h-4' />
                   </CardContent>
                </Card>
             </div>
@@ -103,7 +105,7 @@ const SessionDetails = () => {
          </div>
       </div>
    );
-   return isLoading ? (
+   return isLoading || authLoading ? (
       <SessionDetailsSkeleton />
    ) : (
       <div className='max-w-8xl mx-auto mt-10'>
@@ -115,9 +117,10 @@ const SessionDetails = () => {
                <img
                   src={
                      session.sessionBannerImage ||
-                     "https://miro.medium.com/v2/resize:fit:2000/1*vR3W5nmBzFdVy2BCx6apPg.png"
+                     "https://forum.apoglabs.com/uploads/db1788/original/2X/5/5b0cb2c6ae8868f08c47434948039be215c639a9.png"
                   }
                   alt={session.sessionTitle}
+                  loading='lazy'
                   className='w-full h-64 object-cover rounded-lg mb-4'
                />
                <h1 className='text-3xl font-bold mb-4'>
@@ -155,7 +158,7 @@ const SessionDetails = () => {
                      <h3 className='font-semibold'>Class Start Date</h3>
                      <p>
                         {format(
-                           new Date(session.classStartTime || null),
+                           new Date(session.classStartDate || null),
                            "dd MMM yyyy"
                         )}
                      </p>
@@ -182,8 +185,14 @@ const SessionDetails = () => {
                      </p>
                   </div>
                </div>
-               {/* TODO: sisable for admin, tutor and self user. Also Add Functionality */}
-               <Button disabled={!isRegistrationOpen}>
+               {/* TODO:  Add btn Functionality */}
+               <Button
+                  disabled={
+                     !isRegistrationOpen ||
+                     user?.userRole === "tutor" ||
+                     user?.userRole === "admin" ||
+                     authLoading
+                  }>
                   {isRegistrationOpen ? "Book Now" : "Registration Closed"}
                </Button>
             </div>
@@ -191,27 +200,24 @@ const SessionDetails = () => {
             {/* Tutor Profile */}
             <div>
                <Card>
-                  <CardContent className='p-6'>
-                     <div className='flex items-center mb-4'>
-                        <img
-                           src={
-                              session.tutorProfileImage ||
-                              "https://img.freepik.com/premium-vector/user-icons-includes-user-icons-people-icons-symbols-premiumquality-graphic-design-elements_981536-526.jpg?semt=ais_hybrid"
-                           }
-                           alt={session.tutorName}
-                           className='w-16 h-16 rounded-full mr-4'
-                        />
-                        <div>
-                           <h2 className='text-xl font-semibold'>
-                              {session.tutorName}
-                           </h2>
-                           {/* TODO: make it dynamic */}
-                           <p className='text-sm text-muted-foreground'>
-                              5 courses available
-                           </p>
-                        </div>
+                  <CardContent className='p-6 flex items-center'>
+                     <img
+                        src={
+                           session.tutorProfileImage ||
+                           "https://img.freepik.com/premium-vector/user-icons-includes-user-icons-people-icons-symbols-premiumquality-graphic-design-elements_981536-526.jpg?semt=ais_hybrid"
+                        }
+                        alt={session.tutorName}
+                        className='w-16 h-16 rounded-full mr-4'
+                     />
+                     <div>
+                        <h2 className='text-xl font-semibold'>
+                           {session.tutorName}
+                        </h2>
+                        {/* TODO: make it dynamic */}
+                        <p className='text-sm text-muted-foreground'>
+                           5 courses available
+                        </p>
                      </div>
-                     <p className='text-gray-700'>{session.tutorBio}</p>
                   </CardContent>
                </Card>
             </div>

@@ -98,6 +98,7 @@ const AllStudySessions = () => {
                <SelectContent>
                   <SelectItem value='all'>All Sessions</SelectItem>
                   <SelectItem value='ongoing'>Ongoing</SelectItem>
+                  <SelectItem value='upcoming'>Upcoming</SelectItem>
                   <SelectItem value='closed'>Closed</SelectItem>
                </SelectContent>
             </Select>

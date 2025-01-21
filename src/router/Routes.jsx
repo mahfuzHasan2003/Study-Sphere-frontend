@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
-import ErrorPage from "../pages/ErrorPage";
-import Home from "@/pages/Home";
+import ErrorPage from "../pages/public/ErrorPage";
 import SignIn from "@/pages/Auth/SignIn";
 import SignUp from "@/pages/Auth/SignUp";
 import DashboardLayout from "@/layouts/DashboardLayout";
@@ -10,8 +9,9 @@ import CreateStudySession from "@/pages/Dashboard/Tutor/CreateStudySession";
 import CreateOrManageNotes from "@/pages/Dashboard/Student/CreateOrManageNotes";
 import AllUsers from "@/pages/Dashboard/Admin/AllUsers";
 import ManageAllStudySessions from "@/pages/Dashboard/Admin/ManageAllStudySessions";
-import AllStudySessions from "@/pages/Dashboard/Public/AllStudySessions";
-import SessionDetails from "@/private/SessionDetails";
+import AllStudySessions from "@/pages/public/AllStudySessions";
+import SessionDetails from "@/pages/public/SessionDetails";
+import Home from "@/pages/public/Home";
 
 const routes = createBrowserRouter([
    {

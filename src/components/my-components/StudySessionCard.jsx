@@ -6,10 +6,13 @@ import "@smastrom/react-rating/style.css";
 import { Link } from "react-router-dom";
 
 const StudySessionCard = ({ session }) => {
-   const isOngoing = new Date(session.registrationEndDate) > new Date();
+   const isOngoing =
+      new Date(session.registrationStartDate) <= new Date() &&
+      new Date(session.registrationEndDate) >= new Date();
+   const isUpcoming = new Date(session.registrationStartDate) > new Date();
 
    return (
-      <Card className='overflow-hidden'>
+      <Card className='overflow-hidden flex flex-col'>
          <div className='relative'>
             <img
                src={
@@ -19,22 +22,24 @@ const StudySessionCard = ({ session }) => {
                alt={session.sessionTitle}
                className='w-full h-48 object-cover'
             />
-            <Badge
-               className={`absolute top-2 right-2 py-1 rounded-sm ${
-                  isOngoing ? "bg-green-700" : "bg-red-600"
-               }`}>
-               {isOngoing ? (
-                  <span className='flex items-center gap-1'>
-                     <span className='relative flex h-3 w-3'>
-                        <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75'></span>
-                        <span className='relative inline-flex rounded-full h-3 w-3 bg-green-400'></span>
+            {!isUpcoming ? (
+               <Badge
+                  className={`absolute top-2 right-2 py-1 rounded-sm ${
+                     isOngoing ? "bg-green-700" : "bg-red-600"
+                  }`}>
+                  {isOngoing ? (
+                     <span className='flex items-center gap-1'>
+                        <span className='relative flex h-3 w-3'>
+                           <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75'></span>
+                           <span className='relative inline-flex rounded-full h-3 w-3 bg-green-400'></span>
+                        </span>
+                        Ongoing
                      </span>
-                     Ongoing
-                  </span>
-               ) : (
-                  "Closed"
-               )}
-            </Badge>
+                  ) : (
+                     "Closed"
+                  )}
+               </Badge>
+            ) : null}
          </div>
          <CardContent className='p-4'>
             <div className='flex items-center mb-2'>
@@ -73,8 +78,8 @@ const StudySessionCard = ({ session }) => {
                </span>
             </div>
          </CardContent>
-         <CardFooter>
-            <Button asChild className='w-full'>
+         <CardFooter className='flex-grow'>
+            <Button asChild className='w-full mt-auto'>
                <Link to={`/session-details/${session._id}`}>Read More</Link>
             </Button>
          </CardFooter>
