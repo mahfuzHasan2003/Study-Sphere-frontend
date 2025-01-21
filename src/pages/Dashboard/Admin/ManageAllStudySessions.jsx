@@ -116,6 +116,7 @@ const ManageAllStudySessions = () => {
             description: `${result.message}`,
          });
          refetchPendingData();
+         refetchApprovedData();
       } else {
          toast({
             variant: "error",

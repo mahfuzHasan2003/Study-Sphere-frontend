@@ -10,6 +10,8 @@ import CreateStudySession from "@/pages/Dashboard/Tutor/CreateStudySession";
 import CreateOrManageNotes from "@/pages/Dashboard/Student/CreateOrManageNotes";
 import AllUsers from "@/pages/Dashboard/Admin/AllUsers";
 import ManageAllStudySessions from "@/pages/Dashboard/Admin/ManageAllStudySessions";
+import AllStudySessions from "@/pages/Dashboard/Public/AllStudySessions";
+import SessionDetails from "@/private/SessionDetails";
 
 const routes = createBrowserRouter([
    {
@@ -19,6 +21,18 @@ const routes = createBrowserRouter([
          {
             path: "/",
             element: <Home />,
+         },
+         {
+            path: "all-sessions",
+            element: <AllStudySessions />,
+         },
+         {
+            path: "session-details/:id",
+            element: <SessionDetails />,
+         },
+         {
+            path: "all-sessions",
+            element: <AllStudySessions />,
          },
          {
             path: "auth/signin",

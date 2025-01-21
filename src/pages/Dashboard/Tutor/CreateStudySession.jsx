@@ -61,6 +61,7 @@ const CreateStudySession = () => {
          classEndDate,
          sessionBannerImage,
          tutorName: user?.displayName,
+         tutorProfileImage: user?.photoURL,
          tutorEmail: user?.email,
          registrationFee: 0,
          status: "pending",

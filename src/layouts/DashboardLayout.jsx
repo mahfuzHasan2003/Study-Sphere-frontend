@@ -25,7 +25,7 @@ const DashboardLayout = () => {
    const userWithRole = GetUserWithRole();
    const publicRoutes = [
       { label: "Home", href: "/", icon: BiHomeAlt },
-      { label: "All Sessions", href: "/sessions/all", icon: GiTeacher },
+      { label: "All Sessions", href: "/all-sessions", icon: GiTeacher },
    ];
    const dashboardRoutes =
       userWithRole?.userRole === "tutor"
