@@ -80,8 +80,8 @@ const AllStudySessions = () => {
 
    return (
       <div className='max-w-8xl mx-auto mt-10'>
-         <h1 className='text-3xl font-bold mb-8 text-center text-muted-foreground'>
-            Study Sessions
+         <h1 className='text-2xl md:text-3xl font-bold mb-8 text-center'>
+            Keep exploring and growing your knowledge.
          </h1>
          <div className='flex flex-col md:flex-row gap-4 mb-8'>
             <Input

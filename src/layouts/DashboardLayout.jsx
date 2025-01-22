@@ -17,9 +17,10 @@ import TutorRoutes from "./DashboardRoutes/TutorRoutes";
 import AdminRoutes from "./DashboardRoutes/AdminRoutes";
 import StudentRoutes from "./DashboardRoutes/StudentRoutes";
 import { BiHomeAlt } from "react-icons/bi";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { NavUser } from "@/components/nav-user";
 import { GiTeacher } from "react-icons/gi";
+import { useEffect } from "react";
 
 const DashboardLayout = () => {
    const userWithRole = GetUserWithRole();
@@ -33,6 +34,11 @@ const DashboardLayout = () => {
          : userWithRole?.userRole === "admin"
          ? AdminRoutes
          : StudentRoutes;
+
+   const { pathname } = useLocation();
+   useEffect(() => {
+      window.scrollTo(0, 0);
+   }, [pathname]);
    return (
       <div>
          <SidebarProvider>

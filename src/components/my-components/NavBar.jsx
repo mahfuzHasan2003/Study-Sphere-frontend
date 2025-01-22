@@ -14,7 +14,7 @@ const NavBar = () => {
 
    const NavBarSkeleton = () => {
       return (
-         <div className='flex items-center justify-between max-w-8xl mx-auto py-5'>
+         <div className='flex items-center justify-between max-w-8xl mx-auto py-5 px-5 lg:px-0'>
             <Skeleton className='w-36 h-6' />
 
             <div className='hidden md:inline-flex items-center gap-3'>
@@ -37,7 +37,7 @@ const NavBar = () => {
    return authLoading ? (
       <NavBarSkeleton />
    ) : (
-      <div className='flex items-center justify-between max-w-8xl mx-auto py-5'>
+      <div className='flex items-center justify-between max-w-8xl mx-auto py-5 px-5'>
          <Link to='/'>
             <h4 className='text-xl md:text-2xl font-semibold'>StudySphere</h4>
          </Link>

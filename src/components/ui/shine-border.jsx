@@ -25,7 +25,7 @@ export default function ShineBorder({
             "--border-radius": `${borderRadius}px`,
          }}
          className={cn(
-            "relative min-h-[60px] w-fit min-w-[300px] place-items-center rounded-[--border-radius] p-3",
+            "relative min-h-[60px] w-fit min-w-[300px] place-items-center rounded-[--border-radius] p-px",
             className
          )}>
          <div
@@ -38,7 +38,7 @@ export default function ShineBorder({
                   color instanceof Array ? color.join(",") : color
                },transparent,transparent)`,
             }}
-            className={`pointer-events-none before:bg-shine-size before:absolute before:inset-0 before:size-full before:rounded-[--border-radius] before:p-[--border-width] before:will-change-[background-position] before:content-[""] before:![-webkit-mask-composite:xor] before:![mask-composite:exclude] before:[background-image:--background-radial-gradient] before:[background-size:300%_300%] before:[mask:--mask-linear-gradient] motion-safe:before:animate-shine`}></div>
+            className={`pointer-events-none before:bg-shine-size before:absolute before:inset-0 before:size-full before:rounded-[--border-radius] before:p-[--border-width] before:will-change-[background-position] before:content-[""] before:![-webkit-mask-composite:xor] before:![mask-composite:exclude] before:[background-image:--background-radial-gradient] before:[background-size:300%_300%] before:[mask:--mask-linear-gradient] motion-safe:before:animate-shine hidden lg:block`}></div>
          {children}
       </div>
    );

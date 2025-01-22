@@ -7,7 +7,7 @@ const LatestStudySessions = () => {
    const { data: sessions = [] } = useFetchForGet([""], "/featured-sessions");
 
    return (
-      <section className='py-12 max-w-8xl mx-auto mt-10'>
+      <section className='py-12 max-w-8xl mx-auto mt-5 md:mt-10 px-5'>
          <h2 className='text-3xl font-bold text-center'>
             Featured Study Sessions
          </h2>

@@ -1,9 +1,14 @@
 import NavBar from "@/components/my-components/NavBar";
-import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 
 const MainLayout = () => {
+   const { pathname } = useLocation();
+   useEffect(() => {
+      window.scrollTo(0, 0);
+   }, [pathname]);
    return (
-      <div className='px-5 md:px-0'>
+      <div>
          <NavBar />
          <Outlet />
       </div>
