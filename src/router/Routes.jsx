@@ -13,6 +13,7 @@ import AllStudySessions from "@/pages/public/AllStudySessions";
 import SessionDetails from "@/pages/public/SessionDetails";
 import Home from "@/pages/public/Home";
 import UploadAndManageMaterials from "@/pages/Dashboard/Tutor/UploadAndManageMaterials";
+import UpdateMaterial from "@/pages/UpdateMaterial";
 
 const routes = createBrowserRouter([
    {
@@ -54,7 +55,10 @@ const routes = createBrowserRouter([
             path: "/dashboard",
             element: <h1> Dashboard Home</h1>,
          },
-
+         {
+            path: "update-material/:id",
+            element: <UpdateMaterial />,
+         },
          // student routes
          {
             path: "notes/manage",

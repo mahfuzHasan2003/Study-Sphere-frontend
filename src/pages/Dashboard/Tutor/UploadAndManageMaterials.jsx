@@ -46,6 +46,7 @@ import { useFetchForGet } from "@/hooks/useFetchForGet";
 import useAuth from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { groupMaterialsBySessionId } from "@/utilities/groupMaterialsBySessionId";
+import { useNavigate } from "react-router-dom";
 
 // Dummy data for uploaded materials
 const initialMaterials = [
@@ -92,29 +93,34 @@ function Modal({ isOpen, onClose, title, children }) {
             <DialogHeader>
                <DialogTitle>{title}</DialogTitle>
             </DialogHeader>
-            {children}
+            <DialogDescription>{children}</DialogDescription>
          </DialogContent>
       </Dialog>
    );
 }
-
 export default function UploadAndManageMaterials() {
    const axiosPublic = useAxiosPublic();
    const { user } = useAuth();
    const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
    const [selectedSession, setSelectedSession] = useState(null);
    const [groupedMaterials, setGroupedMaterials] = useState([]);
-   const [selectedSessionMaterials, setSelectedSessionMaterials] =
-      useState(null);
+   const navigate = useNavigate();
+   // const [selectedSessionMaterials, setSelectedSessionMaterials] =
+   //    useState(null);
 
    // getting approved sessions
    const { data: approvedSessions = [] } = useFetchForGet(
-      ["approvedSessions"],
+      ["approvedTutorSessions"],
       `/tutor-study-sessions?email=${user?.email}&status=approved`,
       { enabled: !!user?.email }
    );
    // getting material of selected tutor
-   const { data: tutorMaterials = [] } = useFetchForGet(
+   // TODO:  add sketeton
+   const {
+      data: tutorMaterials = [],
+      refetch,
+      isLoading,
+   } = useFetchForGet(
       ["tutorMaterials"],
       `/get-tutor-materials/${user?.email}`,
       { enabled: !!user?.email }
@@ -167,7 +173,7 @@ export default function UploadAndManageMaterials() {
       );
       setIsUploadDialogOpen(false);
       if (result.success) {
-         //   TODO: refetch material
+         refetch();
          toast({
             variant: "success",
             description: `${result.message}`,
@@ -199,17 +205,9 @@ export default function UploadAndManageMaterials() {
 
    const handleCopyLink = (link) => {
       navigator.clipboard.writeText(link);
-      // You can add a toast notification here
-   };
-
-   const handleOpenMaterial = (link) => {
-      window.open(link, "_blank");
-   };
-
-   const openSessionMaterials = (sessionId) => {
-      console.log("Open sessionMaterials");
-
-      //   setSelectedSessionMaterials();
+      toast({
+         description: "Link copied to clipboard",
+      });
    };
 
    return (
@@ -352,9 +350,9 @@ export default function UploadAndManageMaterials() {
                   </CardContent>
                   <CardFooter>
                      <Button
-                        onClick={() =>
-                           openSessionMaterials(matWithDetails.sessionId)
-                        }>
+                        onClick={() => {
+                           setSelectedSession(matWithDetails);
+                        }}>
                         View Materials
                      </Button>
                   </CardFooter>
@@ -363,54 +361,54 @@ export default function UploadAndManageMaterials() {
          </div>
 
          {/* Modal for viewing session materials */}
-         {selectedSessionMaterials && (
+         {selectedSession && (
             <Modal
-               isOpen={!!selectedSessionMaterials}
-               onClose={() => setSelectedSessionMaterials(null)}
-               title={`Materials for ${
-                  approvedSessions.find(
-                     (s) => s._id === selectedSessionMaterials.sessionId
-                  )?.name || "Unknown Session"
-               }`}>
-               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                  {selectedSessionMaterials?.materials?.map((material) => (
-                     <Card key={material.id}>
-                        <CardHeader>
-                           <CardTitle className='flex justify-between items-center'>
-                              <span>{material.title}</span>
+               isOpen={!!selectedSession}
+               onClose={() => setSelectedSession(null)}
+               title={`Materials for ${selectedSession?.sessionTitle}`}>
+               <div className='grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4'>
+                  {selectedSession?.materials?.map((material) => (
+                     <Card key={material._id} className='rounded-md'>
+                        <CardHeader className='px-4 pb-0 pt-4'>
+                           <CardTitle className='flex justify-between items-center gap-2'>
+                              <span>{material?.materialTitle}</span>
                               <DropdownMenu>
                                  <DropdownMenuTrigger asChild>
-                                    <Button
-                                       variant='ghost'
-                                       className='h-8 w-8 p-0'>
-                                       <MoreVertical className='h-4 w-4' />
-                                    </Button>
+                                    <MoreVertical className='h-4 w-8 cursor-pointer' />
                                  </DropdownMenuTrigger>
                                  <DropdownMenuContent align='end'>
                                     <DropdownMenuItem
                                        onClick={() =>
-                                          handleCopyLink(material.link)
+                                          handleCopyLink(
+                                             material?.materialDriveLink
+                                          )
                                        }>
                                        <Copy className='mr-2 h-4 w-4' /> Copy
                                        Link
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                        onClick={() =>
-                                          handleOpenMaterial(material.link)
+                                          window.open(
+                                             material?.materialDriveLink,
+                                             "_blank"
+                                          )
                                        }>
                                        <ExternalLink className='mr-2 h-4 w-4' />{" "}
                                        Open Material
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem
+                                       onClick={() => {
+                                          navigate(
+                                             `/dashboard/update-material/${material._id}`
+                                          );
+                                          setSelectedSession(null);
+                                       }}>
                                        <Edit className='mr-2 h-4 w-4' /> Update
                                        Material
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                        onClick={() =>
-                                          handleDeleteMaterial(
-                                             selectedSessionMaterials.sessionId,
-                                             material.id
-                                          )
+                                          handleDeleteMaterial(material._id)
                                        }>
                                        <Trash2 className='mr-2 h-4 w-4 text-red-500' />{" "}
                                        <span className='text-red-500'>
@@ -421,11 +419,15 @@ export default function UploadAndManageMaterials() {
                               </DropdownMenu>
                            </CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className='p-4'>
                            <img
-                              src={material.image || "/placeholder.svg"}
-                              alt={material.title}
-                              className='w-full h-32 object-cover'
+                              loading='lazy'
+                              src={
+                                 material.materialCoverImage ||
+                                 "/placeholder.svg"
+                              }
+                              alt={material.sessionTitle}
+                              className='w-full max-h-24 object-cover'
                            />
                         </CardContent>
                      </Card>
