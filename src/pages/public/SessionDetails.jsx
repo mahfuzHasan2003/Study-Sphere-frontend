@@ -18,7 +18,12 @@ const SessionDetails = () => {
    const { data: session = {}, isLoading } = useFetchForGet(
       ["SessionDetails", id],
       `/get-session-details/${id}`
-      // { enabled: !!user?.userRole }
+   );
+
+   const { data: tutorAvailableSessionsCount = {} } = useFetchForGet(
+      ["tutorAvailableSessionsCount", id],
+      `/approved-sessions-count?email=${session?.tutorEmail}`,
+      { enabled: !!session?.tutorEmail }
    );
 
    const isRegistrationOpen =
@@ -109,9 +114,9 @@ const SessionDetails = () => {
       <SessionDetailsSkeleton />
    ) : (
       <div className='max-w-8xl mx-auto mt-10'>
-         <h1 className='text-3xl font-bold mb-8 text-muted-foreground'>
+         <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Session Details
-         </h1>
+         </h2>
          <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
             <div className='md:col-span-2'>
                <img
@@ -213,9 +218,9 @@ const SessionDetails = () => {
                         <h2 className='text-xl font-semibold'>
                            {session.tutorName}
                         </h2>
-                        {/* TODO: make it dynamic */}
                         <p className='text-sm text-muted-foreground'>
-                           5 courses available
+                           {tutorAvailableSessionsCount?.count || 0} session(s)
+                           available
                         </p>
                      </div>
                   </CardContent>

@@ -191,7 +191,7 @@ const ManageAllStudySessions = () => {
          <TableBody>
             {isPendingLoading || isApprovedLoading ? (
                <TableSkeleton />
-            ) : (
+            ) : sessions.length > 0 ? (
                sessions.map((session) => (
                   <TableRow key={session._id}>
                      <TableCell>{session.tutorName}</TableCell>
@@ -259,11 +259,20 @@ const ManageAllStudySessions = () => {
                      </TableCell>
                   </TableRow>
                ))
+            ) : (
+               <TableRow className='hover:bg-transparent'>
+                  <TableCell
+                     colSpan={4}
+                     className='text-red-500 text-center pt-10'>
+                     No {isPending ? " pending" : "Approved"} session available
+                  </TableCell>
+               </TableRow>
             )}
          </TableBody>
       </Table>
    );
 
+   // TODO: implement pagination
    useEffect(() => {
       // setTotalPages(approvedData.totalPages);
    }, [approvedSessions]);
@@ -307,9 +316,9 @@ const ManageAllStudySessions = () => {
 
    return (
       <div>
-         <h4 className='font-bold text-xl md:text-2xl lg:text-3xl my-10'>
+         <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Manage All Study Sessions
-         </h4>
+         </h2>
          <Tabs defaultValue='pending'>
             <TabsList>
                <TabsTrigger value='pending'>Pending Sessions</TabsTrigger>

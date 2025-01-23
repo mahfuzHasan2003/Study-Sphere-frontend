@@ -87,9 +87,9 @@ const TutorSessions = () => {
    };
    return (
       <div>
-         <h4 className='font-bold text-xl md:text-2xl lg:text-3xl'>
+         <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             View and manage your sessions
-         </h4>
+         </h2>
          <TutorSessionTopDashboardSummary
             approvedCount={approvedTutorSessions?.length}
             pendingCount={pendingTutorSessions?.length}

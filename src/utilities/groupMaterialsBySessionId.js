@@ -5,6 +5,7 @@ export const groupMaterialsBySessionId = (materials = []) => {
          acc[sessionId] = {
             sessionId,
             sessionTitle: material?.sessionTitle,
+            tutorEmail: material?.tutorEmail,
             materials: [],
          };
       }

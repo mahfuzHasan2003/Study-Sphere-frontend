@@ -100,9 +100,9 @@ const CreateStudySession = () => {
 
    return (
       <div>
-         <h4 className='font-bold text-xl md:text-2xl lg:text-3xl mb-10'>
+         <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Create a new study session
-         </h4>
+         </h2>
          <Card className='w-full max-w-4xl'>
             <CardHeader>
                <CardDescription>

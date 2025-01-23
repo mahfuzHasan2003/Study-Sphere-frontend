@@ -80,9 +80,9 @@ const AllStudySessions = () => {
 
    return (
       <div className='max-w-8xl mx-auto mt-10'>
-         <h1 className='text-2xl md:text-3xl font-bold mb-8 text-center'>
+         <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Keep exploring and growing your knowledge.
-         </h1>
+         </h2>
          <div className='flex flex-col md:flex-row gap-4 mb-8'>
             <Input
                type='text'

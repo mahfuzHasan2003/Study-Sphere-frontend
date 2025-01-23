@@ -104,9 +104,9 @@ const AllUsers = () => {
 
    return (
       <div>
-         <h4 className='font-bold text-xl md:text-2xl lg:text-3xl my-10'>
-            View and manage all users
-         </h4>
+         <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
+            Manage All Users
+         </h2>
          <div className='flex flex-col sm:flex-row gap-4 mb-5'>
             <div className='flex-1'>
                <Input

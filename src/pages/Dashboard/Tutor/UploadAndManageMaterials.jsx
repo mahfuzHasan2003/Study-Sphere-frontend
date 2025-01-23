@@ -11,6 +11,7 @@ import {
    Dialog,
    DialogContent,
    DialogDescription,
+   DialogFooter,
    DialogHeader,
    DialogTitle,
    DialogTrigger,
@@ -48,44 +49,6 @@ import { toast } from "@/hooks/use-toast";
 import { groupMaterialsBySessionId } from "@/utilities/groupMaterialsBySessionId";
 import { useNavigate } from "react-router-dom";
 
-// Dummy data for uploaded materials
-const initialMaterials = [
-   {
-      sessionId: "1",
-      materials: [
-         {
-            id: "1",
-            title: "Algebra Basics",
-            image: "/placeholder.svg?height=100&width=100",
-            link: "https://drive.google.com/file1",
-         },
-         {
-            id: "2",
-            title: "Geometry Fundamentals",
-            image: "/placeholder.svg?height=100&width=100",
-            link: "https://drive.google.com/file2",
-         },
-         {
-            id: "2",
-            title: "Geometry Fundamentals",
-            image: "/placeholder.svg?height=100&width=100",
-            link: "https://drive.google.com/file2",
-         },
-      ],
-   },
-   {
-      sessionId: "2",
-      materials: [
-         {
-            id: "3",
-            title: "Newton's Laws",
-            image: "/placeholder.svg?height=100&width=100",
-            link: "https://drive.google.com/file3",
-         },
-      ],
-   },
-];
-
 function Modal({ isOpen, onClose, title, children }) {
    return (
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -102,11 +65,12 @@ export default function UploadAndManageMaterials() {
    const axiosPublic = useAxiosPublic();
    const { user } = useAuth();
    const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+   const [isConfirmDeleteDialogOpen, setIsConfirmDeleteDialogOpen] =
+      useState(false);
    const [selectedSession, setSelectedSession] = useState(null);
+   const [selectedMaterilId, setSelectedMaterilId] = useState(null);
    const [groupedMaterials, setGroupedMaterials] = useState([]);
    const navigate = useNavigate();
-   // const [selectedSessionMaterials, setSelectedSessionMaterials] =
-   //    useState(null);
 
    // getting approved sessions
    const { data: approvedSessions = [] } = useFetchForGet(
@@ -116,15 +80,12 @@ export default function UploadAndManageMaterials() {
    );
    // getting material of selected tutor
    // TODO:  add sketeton
-   const {
-      data: tutorMaterials = [],
-      refetch,
-      isLoading,
-   } = useFetchForGet(
-      ["tutorMaterials"],
-      `/get-tutor-materials/${user?.email}`,
-      { enabled: !!user?.email }
-   );
+   const { data: tutorMaterials = [], refetch: refetchMaterials } =
+      useFetchForGet(
+         ["tutorMaterials"],
+         `/get-tutor-materials/${user?.email}`,
+         { enabled: !!user?.email }
+      );
 
    const {
       register,
@@ -156,7 +117,6 @@ export default function UploadAndManageMaterials() {
 
    // adding new material
    const onSubmit = async (data) => {
-      console.log("submitted");
       const materialCoverImage = await uploadToImageBB(
          data?.materialCoverImage[0]
       );
@@ -173,7 +133,7 @@ export default function UploadAndManageMaterials() {
       );
       setIsUploadDialogOpen(false);
       if (result.success) {
-         refetch();
+         refetchMaterials();
          toast({
             variant: "success",
             description: `${result.message}`,
@@ -184,25 +144,29 @@ export default function UploadAndManageMaterials() {
             description: `Error: ${result.message}`,
          });
       }
-
-      //   console.log("Form Data:", data);
    };
 
-   const handleDeleteMaterial = (sessionId, materialId) => {
-      const updatedMaterials = materials.map((session) => {
-         if (session.sessionId === sessionId) {
-            return {
-               ...session,
-               materials: session.materials.filter(
-                  (material) => material.id !== materialId
-               ),
-            };
-         }
-         return session;
-      });
-      setMaterials(updatedMaterials);
+   // delete a material
+   const handleDeleteMaterial = async () => {
+      const { data: result } = await axiosPublic.delete(
+         `/delete-material/${selectedMaterilId}`
+      );
+      if (result.success) {
+         refetchMaterials();
+         toast({
+            variant: "success",
+            description: `${result.message}`,
+         });
+      } else {
+         toast({
+            variant: "error",
+            description: `Error: ${result.message}`,
+         });
+      }
+      setSelectedSession(null);
    };
 
+   // copy link
    const handleCopyLink = (link) => {
       navigator.clipboard.writeText(link);
       toast({
@@ -212,9 +176,9 @@ export default function UploadAndManageMaterials() {
 
    return (
       <div className='container mx-auto p-4'>
-         <h4 className='font-bold text-xl md:text-2xl lg:text-3xl my-10'>
+         <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Upload & manage session materials
-         </h4>
+         </h2>
 
          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             {/* Static upload card */}
@@ -407,9 +371,10 @@ export default function UploadAndManageMaterials() {
                                        Material
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
-                                       onClick={() =>
-                                          handleDeleteMaterial(material._id)
-                                       }>
+                                       onClick={() => {
+                                          setSelectedMaterilId(material._id);
+                                          setIsConfirmDeleteDialogOpen(true);
+                                       }}>
                                        <Trash2 className='mr-2 h-4 w-4 text-red-500' />{" "}
                                        <span className='text-red-500'>
                                           Delete Material
@@ -417,6 +382,39 @@ export default function UploadAndManageMaterials() {
                                     </DropdownMenuItem>
                                  </DropdownMenuContent>
                               </DropdownMenu>
+                              {/* delete confirmation dialog */}
+                              <Dialog
+                                 className='z-50'
+                                 open={isConfirmDeleteDialogOpen}
+                                 onOpenChange={setIsConfirmDeleteDialogOpen}>
+                                 <DialogContent>
+                                    <DialogTitle>Confirm Deletion</DialogTitle>
+                                    <DialogDescription>
+                                       Are you sure you want to delete this
+                                       material? This action cannot be undone.
+                                    </DialogDescription>
+                                    <DialogFooter>
+                                       <Button
+                                          variant='secondary'
+                                          onClick={() =>
+                                             setIsConfirmDeleteDialogOpen(false)
+                                          }>
+                                          Cancel
+                                       </Button>
+                                       <Button
+                                          variant='destructive'
+                                          onClick={() => {
+                                             handleDeleteMaterial();
+                                             setIsConfirmDeleteDialogOpen(
+                                                false
+                                             );
+                                             setSelectedMaterilId(null);
+                                          }}>
+                                          Delete
+                                       </Button>
+                                    </DialogFooter>
+                                 </DialogContent>
+                              </Dialog>
                            </CardTitle>
                         </CardHeader>
                         <CardContent className='p-4'>

@@ -76,61 +76,60 @@ const UpdateMaterial = () => {
          <Card className='w-full'>
             <CardHeader>
                <CardTitle>Update Material</CardTitle>
+               <CardDescription> Fill up your changes</CardDescription>
             </CardHeader>
             <CardContent>
-               <CardDescription>
-                  <form onSubmit={handleSubmit(onSubmit)} className='space-y-3'>
-                     {/* Title */}
-                     <div>
-                        <Label htmlFor='title'>
-                           Title<span className='text-red-500'> *</span>
-                        </Label>
-                        <Input
-                           id='title'
-                           defaultValue={previousData.materialTitle}
-                           {...register("materialTitle", {
-                              required: "Material Title is required.",
-                           })}
-                           placeholder='Enter material title'
-                        />
-                        {errors.materialTitle && (
-                           <p className='text-red-500 text-sm mt-1'>
-                              {errors.materialTitle.message}
-                           </p>
-                        )}
-                     </div>
+               <form onSubmit={handleSubmit(onSubmit)} className='space-y-3'>
+                  {/* Title */}
+                  <div>
+                     <Label htmlFor='title'>
+                        Title<span className='text-red-500'> *</span>
+                     </Label>
+                     <Input
+                        id='title'
+                        defaultValue={previousData.materialTitle}
+                        {...register("materialTitle", {
+                           required: "Material Title is required.",
+                        })}
+                        placeholder='Enter material title'
+                     />
+                     {errors.materialTitle && (
+                        <p className='text-red-500 text-sm mt-1'>
+                           {errors.materialTitle.message}
+                        </p>
+                     )}
+                  </div>
 
-                     {/* Drive Link */}
-                     <div>
-                        <Label htmlFor='link'>
-                           Link (Google Drive)
-                           <span className='text-red-500'> *</span>
-                        </Label>
-                        <Input
-                           id='link'
-                           placeholder='Enter material link'
-                           defaultValue={previousData.materialDriveLink}
-                           {...register("materialDriveLink", {
-                              required: "Link is required.",
-                              pattern: {
-                                 value: /^(https?:\/\/)?(www\.)?drive\.google\.com\/.+$/,
-                                 message: "Invalid Google Drive link.",
-                              },
-                           })}
-                        />
-                        {errors.materialDriveLink && (
-                           <p className='text-red-500 text-sm mt-1'>
-                              {errors.materialDriveLink.message}
-                           </p>
-                        )}
-                     </div>
+                  {/* Drive Link */}
+                  <div>
+                     <Label htmlFor='link'>
+                        Link (Google Drive)
+                        <span className='text-red-500'> *</span>
+                     </Label>
+                     <Input
+                        id='link'
+                        placeholder='Enter material link'
+                        defaultValue={previousData.materialDriveLink}
+                        {...register("materialDriveLink", {
+                           required: "Link is required.",
+                           pattern: {
+                              value: /^(https?:\/\/)?(www\.)?drive\.google\.com\/.+$/,
+                              message: "Invalid Google Drive link.",
+                           },
+                        })}
+                     />
+                     {errors.materialDriveLink && (
+                        <p className='text-red-500 text-sm mt-1'>
+                           {errors.materialDriveLink.message}
+                        </p>
+                     )}
+                  </div>
 
-                     {/* Buttons */}
-                     <div className='flex justify-end space-x-4 mt-5'>
-                        <Button>Save Changes</Button>
-                     </div>
-                  </form>
-               </CardDescription>
+                  {/* Buttons */}
+                  <div className='flex justify-end space-x-4 mt-5'>
+                     <Button>Save Changes</Button>
+                  </div>
+               </form>
             </CardContent>
          </Card>
       </div>

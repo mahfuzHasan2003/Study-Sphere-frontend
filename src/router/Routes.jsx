@@ -14,6 +14,7 @@ import SessionDetails from "@/pages/public/SessionDetails";
 import Home from "@/pages/public/Home";
 import UploadAndManageMaterials from "@/pages/Dashboard/Tutor/UploadAndManageMaterials";
 import UpdateMaterial from "@/pages/UpdateMaterial";
+import ManageAllMaterials from "@/pages/Dashboard/Admin/ManageAllMaterials";
 
 const routes = createBrowserRouter([
    {
@@ -87,6 +88,10 @@ const routes = createBrowserRouter([
          {
             path: "all-study-sessions/manage",
             element: <ManageAllStudySessions />,
+         },
+         {
+            path: "materials/all/manage",
+            element: <ManageAllMaterials />,
          },
       ],
    },
