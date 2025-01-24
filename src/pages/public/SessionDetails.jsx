@@ -1,56 +1,143 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { format } from "date-fns";
 import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+   Card,
+   CardContent,
+   CardDescription,
+   CardFooter,
+   CardHeader,
+   CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useFetchForGet } from "@/hooks/useFetchForGet";
 import { convertToHoursAndMinutes } from "@/utilities/convertToHoursAndMinutes";
 import { Skeleton } from "@/components/ui/skeleton";
 import GetUserWithRole from "@/shared/GetUserWithRole";
 import useAuth from "@/hooks/useAuth";
+import useAxiosPublic from "@/hooks/useAxiosPublic";
+import { toast } from "@/hooks/use-toast";
+import { useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
 
 const SessionDetails = () => {
    const { id } = useParams();
    const user = GetUserWithRole();
    const { authLoading } = useAuth();
-
-   const { data: session = {}, isLoading } = useFetchForGet(
+   const axiosPublic = useAxiosPublic();
+   const navigate = useNavigate();
+   const [bookNowBtnText, setBookNowBtnText] = useState("Booked now");
+   const { data: session = {}, isLoading: sessionLoading } = useFetchForGet(
       ["SessionDetails", id],
       `/get-session-details/${id}`
    );
-
+   const { data: reviews = [] } = useFetchForGet(
+      ["StudentReviews", id],
+      `/get-reviews/${id}`
+   );
    const { data: tutorAvailableSessionsCount = {} } = useFetchForGet(
       ["tutorAvailableSessionsCount", id],
       `/approved-sessions-count?email=${session?.tutorEmail}`,
       { enabled: !!session?.tutorEmail }
    );
+   const { data: isAlreadyBookedSession = {} } = useFetchForGet(
+      ["isAlreadyBookedSession", id, user?.userEmail],
+      `/already-booked-session?id=${id}&user=${user?.userEmail}`,
+      { enabled: !!id && !!user?.userEmail }
+   );
+   const { data: isAlreadySubmittedReview = {} } = useFetchForGet(
+      ["isAlreadySubmittedReview", id, user?.userEmail],
+      `/already-submitted-review?id=${id}&user=${user?.userEmail}`,
+      { enabled: !!id && !!user?.userEmail }
+   );
 
    const isRegistrationOpen =
-      new Date(session.registrationEndDate) > new Date();
+      new Date(session?.registrationEndDate) >= new Date();
+   const showReview =
+      isAlreadyBookedSession &&
+      isAlreadyBookedSession?.paymentStatus === "paid" &&
+      !isAlreadySubmittedReview;
+   useEffect(() => {
+      if (isAlreadyBookedSession) {
+         setBookNowBtnText("Already Booked");
+      } else if (!isRegistrationOpen) {
+         setBookNowBtnText("Registration Closed");
+      } else {
+         setBookNowBtnText("Book Now");
+      }
+   }, [isAlreadyBookedSession, isRegistrationOpen]);
 
-   // TODO: fetch  review
-   // Dummy reviews data
-   const reviews = [
-      {
-         id: 1,
-         author: "John Doe",
-         rating: 5,
-         comment: "Great session! Learned a lot.",
+   const handleSessionBooking = async () => {
+      const bookedData = {
+         sessionId: session?._id,
+         sessionTitle: session?.sessionTitle,
+         sessionBannerImage: session?.sessionBannerImage,
+         studentName: user?.userName,
+         studentEmail: user?.userEmail,
+         studentPhotoURL: user?.userPhotoURL,
+         paymentStatus: session?.registrationFee !== 0 ? "incomplete" : "paid",
+      };
+      const { data: result } = await axiosPublic.post(
+         "/all-booked-sessions",
+         bookedData
+      );
+      if (result.success) {
+         toast({
+            variant: "success",
+            description: `${result.message}`,
+         });
+         navigate("/dashboard/booked-sessions");
+      } else {
+         toast({
+            variant: "error",
+            description: `Error: ${result.message}`,
+         });
+      }
+   };
+   const {
+      register,
+      handleSubmit,
+      control,
+      reset,
+      formState: { errors },
+   } = useForm({
+      mode: "onBlur",
+      defaultValues: {
+         review: "",
+         rating: 0,
       },
-      {
-         id: 2,
-         author: "Jane Smith",
-         rating: 4,
-         comment: "Very informative, but could use more practical examples.",
-      },
-      {
-         id: 3,
-         author: "Bob Johnson",
-         rating: 4.5,
-         comment: "Excellent content and well-presented.",
-      },
-   ];
+   });
+   const onSubmit = async (data) => {
+      const reviewData = {
+         ...data,
+         sessionId: session?._id,
+         studentName: user?.userName,
+         studentEmail: user?.userEmail,
+         studentPhotoURL: user?.userPhotoURL,
+      };
+      const { data: result } = await axiosPublic.post(
+         "/add-review",
+         reviewData
+      );
+      if (result.success) {
+         // TODO: refetch data
+         reset();
+         toast({
+            variant: "success",
+            description: `${result.message}`,
+         });
+      } else {
+         toast({
+            variant: "error",
+            description: `Error: ${result.message}`,
+         });
+      }
+
+      // Handle review submission logic (e.g., API call)
+   };
 
    const SessionDetailsSkeleton = () => (
       <div className='max-w-8xl mx-auto mt-10'>
@@ -110,10 +197,10 @@ const SessionDetails = () => {
          </div>
       </div>
    );
-   return isLoading || authLoading ? (
+   return sessionLoading || authLoading ? (
       <SessionDetailsSkeleton />
    ) : (
-      <div className='max-w-8xl mx-auto mt-10'>
+      <div className='max-w-8xl mx-auto mt-10 space-y-12 px-4'>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Session Details
          </h2>
@@ -190,15 +277,17 @@ const SessionDetails = () => {
                      </p>
                   </div>
                </div>
-               {/* TODO:  Add btn Functionality */}
                <Button
+                  onClick={handleSessionBooking}
                   disabled={
                      !isRegistrationOpen ||
+                     sessionLoading ||
                      user?.userRole === "tutor" ||
                      user?.userRole === "admin" ||
-                     authLoading
+                     authLoading ||
+                     isAlreadyBookedSession
                   }>
-                  {isRegistrationOpen ? "Book Now" : "Registration Closed"}
+                  {bookNowBtnText}
                </Button>
             </div>
 
@@ -228,21 +317,101 @@ const SessionDetails = () => {
             </div>
          </div>
 
-         {/* Review Section */}
-         <div className='mt-12'>
+         {/* add review */}
+         {showReview ? (
+            <>
+               <Separator />
+               <Card className='max-w-md mx-auto'>
+                  <CardHeader>
+                     <CardTitle>Add Your Review</CardTitle>
+                     <CardDescription>
+                        How was the session? Let's share your opinion!!
+                     </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                     <form onSubmit={handleSubmit(onSubmit)}>
+                        {/* Rating Input */}
+                        <div className='mb-3'>
+                           <div id='rating_label'>
+                              Rating<span className='text-red-500'>*</span>
+                           </div>
+                           <Controller
+                              control={control}
+                              name='rating'
+                              rules={{
+                                 validate: (rating) => rating > 0,
+                              }}
+                              render={({
+                                 field: { onChange, onBlur, value },
+                              }) => (
+                                 <Rating
+                                    value={value}
+                                    isRequired
+                                    onChange={onChange}
+                                    style={{ maxWidth: 200 }}
+                                    visibleLabelId='rating_label'
+                                    onBlur={onBlur}
+                                 />
+                              )}
+                           />
+                           {errors.rating && (
+                              <p className='text-red-500 text-sm mt-1'>
+                                 Rating is required.
+                              </p>
+                           )}
+                        </div>
+                        {/* Review Input */}
+                        <div className='mb-4'>
+                           <label className='block font-medium text-sm mb-2'>
+                              Your Review<span className='text-red-500'>*</span>
+                           </label>
+                           <Textarea
+                              {...register("review", { required: true })}
+                              placeholder='Write your review here...'
+                           />
+                           {errors.review && (
+                              <p className='text-red-500 text-sm mt-1'>
+                                 Review is required
+                              </p>
+                           )}
+                        </div>
+                        {/* Submit Button */}
+                        <Button type='submit' className='w-full'>
+                           Submit Review
+                        </Button>
+                     </form>
+                  </CardContent>
+               </Card>
+               <Separator />
+            </>
+         ) : null}
+
+         {/* Reviews Section */}
+         {/*  TODO: add column to parent*/}
+         <div>
             <h2 className='text-2xl font-bold mb-4'>Reviews</h2>
             {reviews.map((review) => (
-               <Card key={review.id} className='mb-4'>
-                  <CardContent className='p-4'>
-                     <div className='flex items-center justify-between mb-2'>
-                        <h3 className='font-semibold'>{review.author}</h3>
-                        <Rating
-                           value={review.rating}
-                           readOnly
-                           style={{ maxWidth: 100 }}
+               <Card key={review?._id} className='mb-4 max-w-md rounded-md'>
+                  <CardContent className='p-4 space-y-2'>
+                     <div className='flex gap-3 items-center'>
+                        <img
+                           src={review?.studentPhotoURL}
+                           alt={review?.studentName}
+                           className='max-w-14 aspect-square object-cover object-center rounded-sm'
                         />
+                        <div>
+                           <h3 className='font-semibold'>
+                              {review?.studentName}
+                           </h3>
+                           <Rating
+                              value={review?.rating}
+                              readOnly
+                              style={{ maxWidth: 100 }}
+                           />
+                        </div>
                      </div>
-                     <p className='text-muted-foreground'>{review.comment}</p>
+                     <Separator />
+                     <p className='text-muted-foreground'>{review?.review}</p>
                   </CardContent>
                </Card>
             ))}

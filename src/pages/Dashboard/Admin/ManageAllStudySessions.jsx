@@ -182,7 +182,7 @@ const ManageAllStudySessions = () => {
       <Table>
          <TableHeader>
             <TableRow>
-               <TableHead>Tutor</TableHead>
+               <TableHead>Tutor Email</TableHead>
                <TableHead>Title</TableHead>
                <TableHead>Description</TableHead>
                <TableHead className='text-right'>Actions</TableHead>
@@ -194,7 +194,7 @@ const ManageAllStudySessions = () => {
             ) : sessions.length > 0 ? (
                sessions.map((session) => (
                   <TableRow key={session._id}>
-                     <TableCell>{session.tutorName}</TableCell>
+                     <TableCell>{session.tutorEmail}</TableCell>
                      <TableCell>{session.sessionTitle}</TableCell>
                      <TableCell>
                         {session?.sessionDescription?.length > 30

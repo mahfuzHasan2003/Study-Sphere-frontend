@@ -79,7 +79,7 @@ const AllStudySessions = () => {
    );
 
    return (
-      <div className='max-w-8xl mx-auto mt-10'>
+      <div className='max-w-8xl mx-auto px-4 mt-10'>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Keep exploring and growing your knowledge.
          </h2>

@@ -3,7 +3,7 @@ import { FiEdit } from "react-icons/fi";
 import { FaRegStickyNote } from "react-icons/fa";
 export default [
    {
-      label: "Booked Sessions",
+      label: "My Booked Sessions",
       href: "booked-sessions",
       icon: BsFillJournalBookmarkFill,
    },

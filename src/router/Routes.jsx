@@ -15,6 +15,7 @@ import Home from "@/pages/public/Home";
 import UploadAndManageMaterials from "@/pages/Dashboard/Tutor/UploadAndManageMaterials";
 import UpdateMaterial from "@/pages/UpdateMaterial";
 import ManageAllMaterials from "@/pages/Dashboard/Admin/ManageAllMaterials";
+import BookedSessions from "@/pages/Dashboard/Student/BookedSessions";
 
 const routes = createBrowserRouter([
    {
@@ -64,6 +65,10 @@ const routes = createBrowserRouter([
          {
             path: "notes/manage",
             element: <CreateOrManageNotes />,
+         },
+         {
+            path: "booked-sessions",
+            element: <BookedSessions />,
          },
 
          // tutor routes

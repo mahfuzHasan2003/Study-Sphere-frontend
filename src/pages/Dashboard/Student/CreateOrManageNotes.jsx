@@ -105,9 +105,9 @@ export default function CreateOrManageNotes() {
 
    return (
       <div className=''>
-         <h4 className='font-bold text-xl md:text-2xl lg:text-3xl my-10'>
+         <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Create and manage your notes
-         </h4>
+         </h2>
          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6'>
             {/* Create New Note */}
             <Dialog
