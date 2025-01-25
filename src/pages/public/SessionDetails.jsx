@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { format, isAfter, isBefore, parseISO, startOfDay } from "date-fns";
+import { isAfter, isBefore, parseISO, startOfDay } from "date-fns";
 import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import {
@@ -66,12 +66,6 @@ const SessionDetails = () => {
       parseISO(session?.registrationStartDate || ""),
       currentDate
    );
-   // console.log(
-   //    "isRegistrationOpen",
-   //    isRegistrationOpen,
-   //    "isUpcoming",
-   //    isUpcoming
-   // );
 
    const showReview =
       isAlreadyBookedSession &&

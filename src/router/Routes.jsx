@@ -19,6 +19,7 @@ import BookedSessions from "@/pages/Dashboard/Student/BookedSessions";
 import AdminRoute from "@/private/AdminRoute";
 import TutorRoute from "@/private/TutorRoute";
 import StudentRoute from "@/private/StudentRoute";
+import StudyMaterials from "@/pages/Dashboard/Student/StudyMaterials";
 
 const routes = createBrowserRouter([
    {
@@ -74,6 +75,14 @@ const routes = createBrowserRouter([
             element: (
                <StudentRoute>
                   <CreateOrManageNotes />
+               </StudentRoute>
+            ),
+         },
+         {
+            path: "materials",
+            element: (
+               <StudentRoute>
+                  <StudyMaterials />
                </StudentRoute>
             ),
          },
