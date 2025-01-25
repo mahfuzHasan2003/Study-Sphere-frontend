@@ -56,7 +56,7 @@ const SessionDetails = () => {
       `/already-submitted-review?id=${id}&user=${user?.userEmail}`,
       { enabled: !!id && !!user?.userEmail }
    );
-   const { data: averageRating } = useFetchForGet(
+   const { data: averageRating = {} } = useFetchForGet(
       ["averageRating", id, reviews],
       `/get-average-review/${id}`
    );
@@ -232,7 +232,7 @@ const SessionDetails = () => {
                <h1 className='text-3xl font-bold mb-4'>
                   {session.sessionTitle}
                </h1>
-               {averageRating ? (
+               {averageRating && averageRating.averageRating ? (
                   <div className='flex items-center mb-4'>
                      <Rating
                         value={averageRating.averageRating}
@@ -243,7 +243,9 @@ const SessionDetails = () => {
                         {averageRating.averageRating} Average Rating
                      </span>
                   </div>
-               ) : null}
+               ) : (
+                  <div></div>
+               )}
                <p className='text-muted-foreground mb-6'>
                   {session.sessionDescription}
                </p>

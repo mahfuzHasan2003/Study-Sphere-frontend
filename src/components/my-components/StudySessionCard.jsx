@@ -12,6 +12,11 @@ const StudySessionCard = ({ session }) => {
       `/approved-sessions-count?email=${session?.tutorEmail}`,
       { enabled: !!session?.tutorEmail }
    );
+   const { data: averageRating = {} } = useFetchForGet(
+      ["averageRating", session?._id],
+      `/get-average-review/${session?._id}`
+   );
+
    const isOngoing =
       new Date(session?.registrationStartDate) <= new Date() &&
       new Date(session?.registrationEndDate) >= new Date();
@@ -72,12 +77,20 @@ const StudySessionCard = ({ session }) => {
                   : session?.sessionDescription}
             </p>
             <div className='flex items-center justify-between'>
-               <div className='flex items-center'>
-                  <Rating value={4.5} readOnly style={{ maxWidth: 100 }} />
-                  <span className='ml-2 text-sm text-muted-foreground'>
-                     4.5
-                  </span>
-               </div>
+               {averageRating ? (
+                  <div className='flex items-center'>
+                     <Rating
+                        value={averageRating.averageRating}
+                        readOnly
+                        style={{ maxWidth: 100 }}
+                     />
+                     <span className='ml-2 text-sm text-muted-foreground'>
+                        {averageRating.averageRating}
+                     </span>
+                  </div>
+               ) : (
+                  <div></div>
+               )}
                <span className='font-bold text-lg'>
                   {session?.registrationFee === 0
                      ? "FREE"
