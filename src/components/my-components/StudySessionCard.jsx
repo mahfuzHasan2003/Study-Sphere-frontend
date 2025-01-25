@@ -4,12 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import { Link } from "react-router-dom";
+import { useFetchForGet } from "@/hooks/useFetchForGet";
 
 const StudySessionCard = ({ session }) => {
+   const { data: tutorAvailableSessionsCount = {} } = useFetchForGet(
+      ["tutorAvailableSessionsCount", session],
+      `/approved-sessions-count?email=${session?.tutorEmail}`,
+      { enabled: !!session?.tutorEmail }
+   );
    const isOngoing =
-      new Date(session.registrationStartDate) <= new Date() &&
-      new Date(session.registrationEndDate) >= new Date();
-   const isUpcoming = new Date(session.registrationStartDate) > new Date();
+      new Date(session?.registrationStartDate) <= new Date() &&
+      new Date(session?.registrationEndDate) >= new Date();
+   const isUpcoming = new Date(session?.registrationStartDate) > new Date();
 
    return (
       <Card className='overflow-hidden flex flex-col'>
@@ -52,17 +58,18 @@ const StudySessionCard = ({ session }) => {
                   className='w-10 h-10 rounded-full mr-2'
                />
                <div>
-                  <h3 className='font-semibold'>{session.tutorName}</h3>
+                  <h3 className='font-semibold'>{session?.tutorName}</h3>
                   <p className='text-sm text-muted-foreground'>
-                     5 courses available
+                     {tutorAvailableSessionsCount?.count || 0} session(s)
+                     available
                   </p>
                </div>
             </div>
-            <h2 className='text-xl font-bold mb-2'>{session.sessionTitle}</h2>
+            <h2 className='text-xl font-bold mb-2'>{session?.sessionTitle}</h2>
             <p className='text-muted-foreground mb-2'>
-               {session.sessionDescription.length > 50
-                  ? `${session.sessionDescription.substring(0, 50)}...`
-                  : session.sessionDescription}
+               {session?.sessionDescription?.length > 50
+                  ? `${session?.sessionDescription?.substring(0, 50)}...`
+                  : session?.sessionDescription}
             </p>
             <div className='flex items-center justify-between'>
                <div className='flex items-center'>
@@ -72,7 +79,7 @@ const StudySessionCard = ({ session }) => {
                   </span>
                </div>
                <span className='font-bold text-lg'>
-                  {session.registrationFee === 0
+                  {session?.registrationFee === 0
                      ? "FREE"
                      : `$${session.registrationFee}`}
                </span>

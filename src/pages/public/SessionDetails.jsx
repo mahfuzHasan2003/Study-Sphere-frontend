@@ -1,12 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { format } from "date-fns";
+import { format, isAfter, isBefore, parseISO, startOfDay } from "date-fns";
 import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import {
    Card,
    CardContent,
    CardDescription,
-   CardFooter,
    CardHeader,
    CardTitle,
 } from "@/components/ui/card";
@@ -22,6 +21,7 @@ import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { formatInTimeZone } from "date-fns-tz";
 
 const SessionDetails = () => {
    const { id } = useParams();
@@ -29,12 +29,12 @@ const SessionDetails = () => {
    const { authLoading } = useAuth();
    const axiosPublic = useAxiosPublic();
    const navigate = useNavigate();
-   const [bookNowBtnText, setBookNowBtnText] = useState("Booked now");
+   const [bookNowBtnText, setBookNowBtnText] = useState("Book Now");
    const { data: session = {}, isLoading: sessionLoading } = useFetchForGet(
       ["SessionDetails", id],
       `/get-session-details/${id}`
    );
-   const { data: reviews = [] } = useFetchForGet(
+   const { data: reviews = [], refetch: refetchReviews } = useFetchForGet(
       ["StudentReviews", id],
       `/get-reviews/${id}`
    );
@@ -48,14 +48,31 @@ const SessionDetails = () => {
       `/already-booked-session?id=${id}&user=${user?.userEmail}`,
       { enabled: !!id && !!user?.userEmail }
    );
-   const { data: isAlreadySubmittedReview = {} } = useFetchForGet(
+   const {
+      data: isAlreadySubmittedReview = {},
+      refetch: refetchAlreadySubmitted,
+   } = useFetchForGet(
       ["isAlreadySubmittedReview", id, user?.userEmail],
       `/already-submitted-review?id=${id}&user=${user?.userEmail}`,
       { enabled: !!id && !!user?.userEmail }
    );
 
+   const currentDate = startOfDay(new Date());
+   const startDate = startOfDay(parseISO(session?.registrationStartDate || ""));
+   const endDate = startOfDay(parseISO(session?.registrationEndDate || ""));
    const isRegistrationOpen =
-      new Date(session?.registrationEndDate) >= new Date();
+      isAfter(currentDate, startDate) && isBefore(currentDate, endDate);
+   const isUpcoming = isAfter(
+      parseISO(session?.registrationStartDate || ""),
+      currentDate
+   );
+   // console.log(
+   //    "isRegistrationOpen",
+   //    isRegistrationOpen,
+   //    "isUpcoming",
+   //    isUpcoming
+   // );
+
    const showReview =
       isAlreadyBookedSession &&
       isAlreadyBookedSession?.paymentStatus === "paid" &&
@@ -63,12 +80,12 @@ const SessionDetails = () => {
    useEffect(() => {
       if (isAlreadyBookedSession) {
          setBookNowBtnText("Already Booked");
-      } else if (!isRegistrationOpen) {
-         setBookNowBtnText("Registration Closed");
-      } else {
+      } else if (isRegistrationOpen || isUpcoming) {
          setBookNowBtnText("Book Now");
+      } else {
+         setBookNowBtnText("Registration Closed");
       }
-   }, [isAlreadyBookedSession, isRegistrationOpen]);
+   }, [isAlreadyBookedSession, isRegistrationOpen, isUpcoming]);
 
    const handleSessionBooking = async () => {
       const bookedData = {
@@ -123,7 +140,8 @@ const SessionDetails = () => {
          reviewData
       );
       if (result.success) {
-         // TODO: refetch data
+         refetchAlreadySubmitted();
+         refetchReviews();
          reset();
          toast({
             variant: "success",
@@ -135,8 +153,6 @@ const SessionDetails = () => {
             description: `Error: ${result.message}`,
          });
       }
-
-      // Handle review submission logic (e.g., API call)
    };
 
    const SessionDetailsSkeleton = () => (
@@ -211,7 +227,7 @@ const SessionDetails = () => {
                      session.sessionBannerImage ||
                      "https://forum.apoglabs.com/uploads/db1788/original/2X/5/5b0cb2c6ae8868f08c47434948039be215c639a9.png"
                   }
-                  alt={session.sessionTitle}
+                  alt={session?.sessionTitle}
                   loading='lazy'
                   className='w-full h-64 object-cover rounded-lg mb-4'
                />
@@ -231,8 +247,9 @@ const SessionDetails = () => {
                   <div>
                      <h3 className='font-semibold'>Registration Start Date</h3>
                      <p>
-                        {format(
-                           new Date(session.registrationStartDate || null),
+                        {formatInTimeZone(
+                           session?.registrationStartDate || "",
+                           "UTC",
                            "dd MMM yyyy"
                         )}
                      </p>
@@ -240,8 +257,9 @@ const SessionDetails = () => {
                   <div>
                      <h3 className='font-semibold'>Registration End Date</h3>
                      <p>
-                        {format(
-                           new Date(session.registrationEndDate || null),
+                        {formatInTimeZone(
+                           session?.registrationEndDate || "",
+                           "UTC",
                            "dd MMM yyyy"
                         )}
                      </p>
@@ -249,8 +267,9 @@ const SessionDetails = () => {
                   <div>
                      <h3 className='font-semibold'>Class Start Date</h3>
                      <p>
-                        {format(
-                           new Date(session.classStartDate || null),
+                        {formatInTimeZone(
+                           session?.classStartDate || "",
+                           "UTC",
                            "dd MMM yyyy"
                         )}
                      </p>
@@ -258,8 +277,9 @@ const SessionDetails = () => {
                   <div>
                      <h3 className='font-semibold'>Class End Date</h3>
                      <p>
-                        {format(
-                           new Date(session.classEndDate || null),
+                        {formatInTimeZone(
+                           session?.classEndDate || "",
+                           "UTC",
                            "dd MMM yyyy"
                         )}
                      </p>
@@ -281,6 +301,7 @@ const SessionDetails = () => {
                   onClick={handleSessionBooking}
                   disabled={
                      !isRegistrationOpen ||
+                     isUpcoming ||
                      sessionLoading ||
                      user?.userRole === "tutor" ||
                      user?.userRole === "admin" ||
@@ -301,7 +322,7 @@ const SessionDetails = () => {
                            "https://img.freepik.com/premium-vector/user-icons-includes-user-icons-people-icons-symbols-premiumquality-graphic-design-elements_981536-526.jpg?semt=ais_hybrid"
                         }
                         alt={session.tutorName}
-                        className='w-16 h-16 rounded-full mr-4'
+                        className='w-16 h-16 rounded-full mr-4 aspect-square object-cover object-center'
                      />
                      <div>
                         <h2 className='text-xl font-semibold'>
@@ -388,34 +409,39 @@ const SessionDetails = () => {
 
          {/* Reviews Section */}
          {/*  TODO: add column to parent*/}
-         <div>
-            <h2 className='text-2xl font-bold mb-4'>Reviews</h2>
-            {reviews.map((review) => (
-               <Card key={review?._id} className='mb-4 max-w-md rounded-md'>
-                  <CardContent className='p-4 space-y-2'>
-                     <div className='flex gap-3 items-center'>
-                        <img
-                           src={review?.studentPhotoURL}
-                           alt={review?.studentName}
-                           className='max-w-14 aspect-square object-cover object-center rounded-sm'
-                        />
-                        <div>
-                           <h3 className='font-semibold'>
-                              {review?.studentName}
-                           </h3>
-                           <Rating
-                              value={review?.rating}
-                              readOnly
-                              style={{ maxWidth: 100 }}
+         {reviews && reviews.length > 0 ? (
+            <div>
+               <h2 className='text-2xl font-bold mb-4'>Reviews</h2>
+               {reviews.map((review) => (
+                  <Card key={review?._id} className='mb-4 max-w-md rounded-md'>
+                     <CardContent className='p-4 space-y-2'>
+                        <div className='flex gap-3 items-center'>
+                           <img
+                              src={review?.studentPhotoURL}
+                              alt={review?.studentName}
+                              referrerPolicy='no-referrer'
+                              className='max-w-14 aspect-square object-cover object-center rounded-sm'
                            />
+                           <div>
+                              <h3 className='font-semibold'>
+                                 {review?.studentName}
+                              </h3>
+                              <Rating
+                                 value={review?.rating}
+                                 readOnly
+                                 style={{ maxWidth: 100 }}
+                              />
+                           </div>
                         </div>
-                     </div>
-                     <Separator />
-                     <p className='text-muted-foreground'>{review?.review}</p>
-                  </CardContent>
-               </Card>
-            ))}
-         </div>
+                        <Separator />
+                        <p className='text-muted-foreground'>
+                           {review?.review}
+                        </p>
+                     </CardContent>
+                  </Card>
+               ))}
+            </div>
+         ) : null}
       </div>
    );
 };

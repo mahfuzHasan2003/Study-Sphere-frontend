@@ -16,6 +16,9 @@ import UploadAndManageMaterials from "@/pages/Dashboard/Tutor/UploadAndManageMat
 import UpdateMaterial from "@/pages/UpdateMaterial";
 import ManageAllMaterials from "@/pages/Dashboard/Admin/ManageAllMaterials";
 import BookedSessions from "@/pages/Dashboard/Student/BookedSessions";
+import AdminRoute from "@/private/AdminRoute";
+import TutorRoute from "@/private/TutorRoute";
+import StudentRoute from "@/private/StudentRoute";
 
 const routes = createBrowserRouter([
    {
@@ -57,46 +60,82 @@ const routes = createBrowserRouter([
             path: "/dashboard",
             element: <h1> Dashboard Home</h1>,
          },
-         {
-            path: "update-material/:id",
-            element: <UpdateMaterial />,
-         },
-         // student routes
-         {
-            path: "notes/manage",
-            element: <CreateOrManageNotes />,
-         },
+         // ------------- student routes ----------
          {
             path: "booked-sessions",
-            element: <BookedSessions />,
+            element: (
+               <StudentRoute>
+                  <BookedSessions />
+               </StudentRoute>
+            ),
+         },
+         {
+            path: "notes/manage",
+            element: (
+               <StudentRoute>
+                  <CreateOrManageNotes />
+               </StudentRoute>
+            ),
          },
 
-         // tutor routes
+         // ----------- tutor routes -----------
          {
             path: "tutor-sessions",
-            element: <TutorSessions />,
+            element: (
+               <TutorRoute>
+                  <TutorSessions />
+               </TutorRoute>
+            ),
          },
          {
             path: "create-session",
-            element: <CreateStudySession />,
+            element: (
+               <TutorRoute>
+                  <CreateStudySession />
+               </TutorRoute>
+            ),
          },
          {
             path: "upload-and-manage-materials",
-            element: <UploadAndManageMaterials />,
+            element: (
+               <TutorRoute>
+                  <UploadAndManageMaterials />
+               </TutorRoute>
+            ),
+         },
+         {
+            path: "update-material/:id",
+            element: (
+               <TutorRoute>
+                  <UpdateMaterial />
+               </TutorRoute>
+            ),
          },
 
-         // admin routes
+         // ------------ admin routes ------------
          {
             path: "users/all",
-            element: <AllUsers />,
+            element: (
+               <AdminRoute>
+                  <AllUsers />,
+               </AdminRoute>
+            ),
          },
          {
             path: "all-study-sessions/manage",
-            element: <ManageAllStudySessions />,
+            element: (
+               <AdminRoute>
+                  <ManageAllStudySessions />
+               </AdminRoute>
+            ),
          },
          {
             path: "materials/all/manage",
-            element: <ManageAllMaterials />,
+            element: (
+               <AdminRoute>
+                  <ManageAllMaterials />
+               </AdminRoute>
+            ),
          },
       ],
    },
