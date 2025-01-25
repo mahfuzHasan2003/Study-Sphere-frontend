@@ -56,6 +56,10 @@ const SessionDetails = () => {
       `/already-submitted-review?id=${id}&user=${user?.userEmail}`,
       { enabled: !!id && !!user?.userEmail }
    );
+   const { data: averageRating } = useFetchForGet(
+      ["averageRating", id, reviews],
+      `/get-average-review/${id}`
+   );
 
    const currentDate = startOfDay(new Date());
    const startDate = startOfDay(parseISO(session?.registrationStartDate || ""));
@@ -228,12 +232,18 @@ const SessionDetails = () => {
                <h1 className='text-3xl font-bold mb-4'>
                   {session.sessionTitle}
                </h1>
-               <div className='flex items-center mb-4'>
-                  <Rating value={4.5} readOnly style={{ maxWidth: 100 }} />
-                  <span className='ml-2 text-sm text-muted-foreground'>
-                     4.5 Average Rating
-                  </span>
-               </div>
+               {averageRating ? (
+                  <div className='flex items-center mb-4'>
+                     <Rating
+                        value={averageRating.averageRating}
+                        readOnly
+                        style={{ maxWidth: 100 }}
+                     />
+                     <span className='ml-2 text-sm text-muted-foreground'>
+                        {averageRating.averageRating} Average Rating
+                     </span>
+                  </div>
+               ) : null}
                <p className='text-muted-foreground mb-6'>
                   {session.sessionDescription}
                </p>
