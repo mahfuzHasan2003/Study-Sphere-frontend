@@ -22,6 +22,7 @@ const AllStudySessions = () => {
 
    // TODO: Implement pagination
    const { data: allSessionsData = {}, isLoading } = useFetchForGet(
+      "public",
       ["sessions", currentPage, searchValue, filterBy],
       `/get-all-sessions?page=${currentPage}&searchValue=${searchValue}&filterBy=${filterBy}`,
       { keepPreviousData: true }

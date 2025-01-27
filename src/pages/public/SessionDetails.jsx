@@ -1,5 +1,5 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { isAfter, isBefore, parseISO, startOfDay } from "date-fns";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { isAfter, isBefore, isEqual, parseISO, startOfDay } from "date-fns";
 import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import {
@@ -15,77 +15,105 @@ import { convertToHoursAndMinutes } from "@/utilities/convertToHoursAndMinutes";
 import { Skeleton } from "@/components/ui/skeleton";
 import GetUserWithRole from "@/shared/GetUserWithRole";
 import useAuth from "@/hooks/useAuth";
-import useAxiosPublic from "@/hooks/useAxiosPublic";
 import { toast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { formatInTimeZone } from "date-fns-tz";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 const SessionDetails = () => {
    const { id } = useParams();
    const user = GetUserWithRole();
    const { authLoading } = useAuth();
-   const axiosPublic = useAxiosPublic();
+   const axiosSecure = useAxiosSecure();
    const navigate = useNavigate();
    const [bookNowBtnText, setBookNowBtnText] = useState("Book Now");
    const { data: session = {}, isLoading: sessionLoading } = useFetchForGet(
+      "public",
       ["SessionDetails", id],
       `/get-session-details/${id}`
    );
    const { data: reviews = [], refetch: refetchReviews } = useFetchForGet(
+      "secure",
       ["StudentReviews", id],
       `/get-reviews/${id}`
    );
    const { data: tutorAvailableSessionsCount = {} } = useFetchForGet(
+      "public",
       ["tutorAvailableSessionsCount", id],
       `/approved-sessions-count?email=${session?.tutorEmail}`,
       { enabled: !!session?.tutorEmail }
    );
    const { data: isAlreadyBookedSession = {} } = useFetchForGet(
+      "secure",
       ["isAlreadyBookedSession", id, user?.userEmail],
       `/already-booked-session?id=${id}&user=${user?.userEmail}`,
-      { enabled: !!id && !!user?.userEmail }
+      { enabled: !!id && !!user.userEmail }
    );
    const {
       data: isAlreadySubmittedReview = {},
       refetch: refetchAlreadySubmitted,
    } = useFetchForGet(
-      ["isAlreadySubmittedReview", id, user?.userEmail],
+      "secure",
+      [("isAlreadySubmittedReview", id, user?.userEmail)],
       `/already-submitted-review?id=${id}&user=${user?.userEmail}`,
       { enabled: !!id && !!user?.userEmail }
    );
    const { data: averageRating = {} } = useFetchForGet(
+      "public",
       ["averageRating", id, reviews],
-      `/get-average-review/${id}`
+      `/get-average-rating/${id}`
    );
 
    const currentDate = startOfDay(new Date());
    const startDate = startOfDay(parseISO(session?.registrationStartDate || ""));
    const endDate = startOfDay(parseISO(session?.registrationEndDate || ""));
    const isRegistrationOpen =
-      isAfter(currentDate, startDate) && isBefore(currentDate, endDate);
-   const isUpcoming = isAfter(
-      parseISO(session?.registrationStartDate || ""),
-      currentDate
-   );
+      (isAfter(currentDate, startDate) || isEqual(currentDate, startDate)) &&
+      (isBefore(currentDate, endDate) || isEqual(currentDate, endDate));
+   const isUpcoming = isAfter(startDate, currentDate);
 
    const showReview =
       isAlreadyBookedSession &&
-      isAlreadyBookedSession?.paymentStatus === "paid" &&
+      isAlreadyBookedSession.paymentStatus === "paid" &&
       !isAlreadySubmittedReview;
    useEffect(() => {
-      if (isAlreadyBookedSession) {
+      if (!user?.userEmail) {
+         setBookNowBtnText("Book Now");
+      } else if (isAlreadyBookedSession.paymentStatus) {
          setBookNowBtnText("Already Booked");
       } else if (isRegistrationOpen || isUpcoming) {
          setBookNowBtnText("Book Now");
       } else {
          setBookNowBtnText("Registration Closed");
       }
-   }, [isAlreadyBookedSession, isRegistrationOpen, isUpcoming]);
+   }, [
+      isAlreadyBookedSession,
+      isRegistrationOpen,
+      isUpcoming,
+      user?.userEmail,
+   ]);
 
    const handleSessionBooking = async () => {
+      if (!user.userEmail) {
+         toast({
+            variant: "error",
+            description: (
+               <p>
+                  Please login first to book the session{" "}
+                  <Link
+                     to='/auth/signin'
+                     className='text-blue-600 underline font-semibold'
+                     state={{ userFrom: `/session-details/${id}` }}>
+                     login now
+                  </Link>
+               </p>
+            ),
+         });
+         return;
+      }
       const bookedData = {
          sessionId: session?._id,
          sessionTitle: session?.sessionTitle,
@@ -95,7 +123,7 @@ const SessionDetails = () => {
          studentPhotoURL: user?.userPhotoURL,
          paymentStatus: session?.registrationFee !== 0 ? "incomplete" : "paid",
       };
-      const { data: result } = await axiosPublic.post(
+      const { data: result } = await axiosSecure.post(
          "/all-booked-sessions",
          bookedData
       );
@@ -133,7 +161,7 @@ const SessionDetails = () => {
          studentEmail: user?.userEmail,
          studentPhotoURL: user?.userPhotoURL,
       };
-      const { data: result } = await axiosPublic.post(
+      const { data: result } = await axiosSecure.post(
          "/add-review",
          reviewData
       );
@@ -153,6 +181,7 @@ const SessionDetails = () => {
       }
    };
 
+   // TODO: Show ongoing, upcoming from backend
    const SessionDetailsSkeleton = () => (
       <div className='max-w-8xl mx-auto mt-10'>
          <h1 className='text-3xl font-bold mb-8'>
@@ -312,7 +341,7 @@ const SessionDetails = () => {
                      user?.userRole === "tutor" ||
                      user?.userRole === "admin" ||
                      authLoading ||
-                     isAlreadyBookedSession
+                     isAlreadyBookedSession?.paymentStatus
                   }>
                   {bookNowBtnText}
                </Button>

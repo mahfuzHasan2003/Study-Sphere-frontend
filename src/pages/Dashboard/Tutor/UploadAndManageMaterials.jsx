@@ -42,12 +42,12 @@ import {
    Edit,
 } from "lucide-react";
 import { uploadToImageBB } from "@/utilities/uploadToImageBB";
-import useAxiosPublic from "@/hooks/useAxiosPublic";
 import { useFetchForGet } from "@/hooks/useFetchForGet";
 import useAuth from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { groupMaterialsBySessionId } from "@/utilities/groupMaterialsBySessionId";
 import { useNavigate } from "react-router-dom";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 function Modal({ isOpen, onClose, title, children }) {
    return (
@@ -62,7 +62,7 @@ function Modal({ isOpen, onClose, title, children }) {
    );
 }
 export default function UploadAndManageMaterials() {
-   const axiosPublic = useAxiosPublic();
+   const axiosSecure = useAxiosSecure();
    const { user } = useAuth();
    const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
    const [isConfirmDeleteDialogOpen, setIsConfirmDeleteDialogOpen] =
@@ -74,6 +74,7 @@ export default function UploadAndManageMaterials() {
 
    // getting approved sessions
    const { data: approvedSessions = [] } = useFetchForGet(
+      "secure",
       ["approvedTutorSessions"],
       `/tutor-study-sessions?email=${user?.email}&status=approved`,
       { enabled: !!user?.email }
@@ -82,6 +83,7 @@ export default function UploadAndManageMaterials() {
    // TODO:  add sketeton
    const { data: tutorMaterials = [], refetch: refetchMaterials } =
       useFetchForGet(
+         "secure",
          ["tutorMaterials"],
          `/get-tutor-materials/${user?.email}`,
          { enabled: !!user?.email }
@@ -121,7 +123,7 @@ export default function UploadAndManageMaterials() {
          data?.materialCoverImage[0]
       );
       //    TODO: post with tanstack query
-      const { data: result } = await axiosPublic.post(
+      const { data: result } = await axiosSecure.post(
          "/upload-a-new-material",
          {
             sessionId: data?.materialFor,
@@ -148,7 +150,7 @@ export default function UploadAndManageMaterials() {
 
    // delete a material
    const handleDeleteMaterial = async () => {
-      const { data: result } = await axiosPublic.delete(
+      const { data: result } = await axiosSecure.delete(
          `/delete-material/${selectedMaterilId}`
       );
       if (result.success) {
@@ -180,149 +182,157 @@ export default function UploadAndManageMaterials() {
             Upload & manage session materials
          </h2>
 
-         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {/* Static upload card */}
-            <Dialog
-               open={isUploadDialogOpen}
-               onOpenChange={setIsUploadDialogOpen}>
-               <DialogTrigger asChild>
-                  <Card className='border-2 border-dashed border-muted hover:border-muted-foreground transition-colors cursor-pointer'>
-                     <CardContent className='flex flex-col items-center justify-center h-[200px]'>
-                        <Upload className='h-12 w-12 text-muted-foreground' />
-                        <p className='mt-4 text-lg font-medium text-muted-foreground'>
-                           Upload a new material
+         {approvedSessions.length > 0 ? (
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+               {/* Static upload card */}
+               <Dialog
+                  open={isUploadDialogOpen}
+                  onOpenChange={setIsUploadDialogOpen}>
+                  <DialogTrigger asChild>
+                     <Card className='border-2 border-dashed border-muted hover:border-muted-foreground transition-colors cursor-pointer'>
+                        <CardContent className='flex flex-col items-center justify-center h-[200px]'>
+                           <Upload className='h-12 w-12 text-muted-foreground' />
+                           <p className='mt-4 text-lg font-medium text-muted-foreground'>
+                              Upload a new material
+                           </p>
+                        </CardContent>
+                     </Card>
+                  </DialogTrigger>
+                  <DialogContent>
+                     <DialogHeader>
+                        <DialogTitle>Upload Material</DialogTitle>
+                     </DialogHeader>
+                     <DialogDescription>
+                        <form
+                           onSubmit={handleSubmit(onSubmit)}
+                           className='space-y-4'
+                           noValidate>
+                           <div>
+                              <Label htmlFor='session'>
+                                 Session<span className='text-red-500'> *</span>
+                              </Label>
+                              <Select
+                                 {...register("materialFor", {
+                                    required: "Session selection is required.",
+                                 })}
+                                 onValueChange={(value) =>
+                                    setValue("materialFor", value)
+                                 }>
+                                 <SelectTrigger>
+                                    <SelectValue placeholder='Select a session' />
+                                 </SelectTrigger>
+                                 <SelectContent>
+                                    {approvedSessions?.map((session) => (
+                                       <SelectItem
+                                          key={session?._id}
+                                          value={session?._id}>
+                                          {session?.sessionTitle}
+                                       </SelectItem>
+                                    ))}
+                                 </SelectContent>
+                              </Select>
+                              {!materialFor && (
+                                 <p className='text-red-500 text-sm mt-1'>
+                                    Session is required.
+                                 </p>
+                              )}
+                           </div>
+                           <div>
+                              <Label htmlFor='title'>
+                                 Title<span className='text-red-500'> *</span>
+                              </Label>
+                              <Input
+                                 id='title'
+                                 {...register("materialTitle", {
+                                    required: "Material Title is required.",
+                                 })}
+                                 placeholder='Enter material title'
+                              />
+                              {errors.materialTitle && (
+                                 <p className='text-red-500 text-sm mt-1'>
+                                    {errors.materialTitle.message}
+                                 </p>
+                              )}
+                           </div>
+                           <div>
+                              <Label htmlFor='image'>
+                                 Image<span className='text-red-500'> *</span>
+                              </Label>
+                              <Input
+                                 id='image'
+                                 type='file'
+                                 accept='image/*'
+                                 {...register("materialCoverImage", {
+                                    required:
+                                       "Image as material cover is required.",
+                                 })}
+                              />
+                              {errors.materialCoverImage && (
+                                 <p className='text-red-500 text-sm mt-1'>
+                                    {errors.materialCoverImage.message}
+                                 </p>
+                              )}
+                           </div>
+                           <div>
+                              <Label htmlFor='link'>
+                                 Link (Google Drive)
+                                 <span className='text-red-500'> *</span>
+                              </Label>
+                              <Input
+                                 id='link'
+                                 placeholder='Enter material link'
+                                 {...register("materialDriveLink", {
+                                    required: "Link is required.",
+                                    pattern: {
+                                       value: /^(https?:\/\/)?(www\.)?drive\.google\.com\/.+$/,
+                                       message: "Invalid Google Drive link.",
+                                    },
+                                 })}
+                              />
+                              {errors.materialDriveLink && (
+                                 <p className='text-red-500 text-sm mt-1'>
+                                    {errors.materialDriveLink.message}
+                                 </p>
+                              )}
+                           </div>
+                           <div className='text-end'>
+                              <Button type='submit'>Upload</Button>
+                           </div>
+                        </form>
+                     </DialogDescription>
+                  </DialogContent>
+               </Dialog>
+
+               {/* TODO: handle loading state */}
+               {/* Dynamic material cards */}
+               {groupedMaterials?.map((matWithDetails) => (
+                  <Card key={matWithDetails?.sessionId}>
+                     <CardHeader>
+                        <CardTitle>{matWithDetails?.sessionTitle}</CardTitle>
+                     </CardHeader>
+                     <CardContent>
+                        <p>
+                           {matWithDetails?.materials?.length} material(s)
+                           uploaded
                         </p>
                      </CardContent>
+                     <CardFooter>
+                        <Button
+                           onClick={() => {
+                              setSelectedSession(matWithDetails);
+                           }}>
+                           View Materials
+                        </Button>
+                     </CardFooter>
                   </Card>
-               </DialogTrigger>
-               <DialogContent>
-                  <DialogHeader>
-                     <DialogTitle>Upload Material</DialogTitle>
-                  </DialogHeader>
-                  <DialogDescription>
-                     <form
-                        onSubmit={handleSubmit(onSubmit)}
-                        className='space-y-4'
-                        noValidate>
-                        <div>
-                           <Label htmlFor='session'>
-                              Session<span className='text-red-500'> *</span>
-                           </Label>
-                           <Select
-                              {...register("materialFor", {
-                                 required: "Session selection is required.",
-                              })}
-                              onValueChange={(value) =>
-                                 setValue("materialFor", value)
-                              }>
-                              <SelectTrigger>
-                                 <SelectValue placeholder='Select a session' />
-                              </SelectTrigger>
-                              <SelectContent>
-                                 {approvedSessions?.map((session) => (
-                                    <SelectItem
-                                       key={session?._id}
-                                       value={session?._id}>
-                                       {session?.sessionTitle}
-                                    </SelectItem>
-                                 ))}
-                              </SelectContent>
-                           </Select>
-                           {!materialFor && (
-                              <p className='text-red-500 text-sm mt-1'>
-                                 Session is required.
-                              </p>
-                           )}
-                        </div>
-                        <div>
-                           <Label htmlFor='title'>
-                              Title<span className='text-red-500'> *</span>
-                           </Label>
-                           <Input
-                              id='title'
-                              {...register("materialTitle", {
-                                 required: "Material Title is required.",
-                              })}
-                              placeholder='Enter material title'
-                           />
-                           {errors.materialTitle && (
-                              <p className='text-red-500 text-sm mt-1'>
-                                 {errors.materialTitle.message}
-                              </p>
-                           )}
-                        </div>
-                        <div>
-                           <Label htmlFor='image'>
-                              Image<span className='text-red-500'> *</span>
-                           </Label>
-                           <Input
-                              id='image'
-                              type='file'
-                              accept='image/*'
-                              {...register("materialCoverImage", {
-                                 required:
-                                    "Image as material cover is required.",
-                              })}
-                           />
-                           {errors.materialCoverImage && (
-                              <p className='text-red-500 text-sm mt-1'>
-                                 {errors.materialCoverImage.message}
-                              </p>
-                           )}
-                        </div>
-                        <div>
-                           <Label htmlFor='link'>
-                              Link (Google Drive)
-                              <span className='text-red-500'> *</span>
-                           </Label>
-                           <Input
-                              id='link'
-                              placeholder='Enter material link'
-                              {...register("materialDriveLink", {
-                                 required: "Link is required.",
-                                 pattern: {
-                                    value: /^(https?:\/\/)?(www\.)?drive\.google\.com\/.+$/,
-                                    message: "Invalid Google Drive link.",
-                                 },
-                              })}
-                           />
-                           {errors.materialDriveLink && (
-                              <p className='text-red-500 text-sm mt-1'>
-                                 {errors.materialDriveLink.message}
-                              </p>
-                           )}
-                        </div>
-                        <div className='text-end'>
-                           <Button type='submit'>Upload</Button>
-                        </div>
-                     </form>
-                  </DialogDescription>
-               </DialogContent>
-            </Dialog>
-
-            {/* TODO: handle loading state */}
-            {/* Dynamic material cards */}
-            {groupedMaterials?.map((matWithDetails) => (
-               <Card key={matWithDetails?.sessionId}>
-                  <CardHeader>
-                     <CardTitle>{matWithDetails?.sessionTitle}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                     <p>
-                        {matWithDetails?.materials?.length} material(s) uploaded
-                     </p>
-                  </CardContent>
-                  <CardFooter>
-                     <Button
-                        onClick={() => {
-                           setSelectedSession(matWithDetails);
-                        }}>
-                        View Materials
-                     </Button>
-                  </CardFooter>
-               </Card>
-            ))}
-         </div>
+               ))}
+            </div>
+         ) : (
+            <p className='text-red-500 mt-10'>
+               Please add a session first and wait for admin verification to
+               upload materials. Thank you!! 😊
+            </p>
+         )}
 
          {/* Modal for viewing session materials */}
          {selectedSession && (

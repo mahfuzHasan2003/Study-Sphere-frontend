@@ -28,9 +28,9 @@ import {
    DialogHeader,
    DialogTitle,
 } from "@/components/ui/dialog";
-import useAxiosPublic from "@/hooks/useAxiosPublic";
 import useAuth from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 const AllUsers = () => {
    const [searchQuery, setSearchQuery] = useState("");
@@ -39,7 +39,7 @@ const AllUsers = () => {
    const [dialogOpen, setDialogOpen] = useState(false);
    const [actionUser, setActionUser] = useState(null);
    const [currentAction, setCurrentAction] = useState(null);
-   const axiosPublic = useAxiosPublic();
+   const axiosSecure = useAxiosSecure();
    const { user: loggedInAdmin } = useAuth();
 
    const TableSkeleton = () => (
@@ -74,6 +74,7 @@ const AllUsers = () => {
       data: users = [],
       refetch,
    } = useFetchForGet(
+      "secure",
       ["allUsers", searchQuery, roleFilter],
       `/get-all-users/${loggedInAdmin?.email}?searchQuery=${searchQuery}&roleFilter=${roleFilter}`,
       { enabled: !!loggedInAdmin?.email }
@@ -82,7 +83,7 @@ const AllUsers = () => {
    const handleConfirm = async (user) => {
       if (currentAction === "makeAdmin") {
          // handleUpdateRole(user._id);
-         await axiosPublic.patch(`/update-user-role/${user._id}`, {
+         await axiosSecure.patch(`/update-user-role/${user._id}`, {
             newRole: "admin",
          });
          toast({
@@ -90,7 +91,7 @@ const AllUsers = () => {
             description: "User role has been updated successfully.",
          });
       } else if (currentAction === "removeAdmin") {
-         await axiosPublic.patch(`/update-user-role/${user._id}`, {
+         await axiosSecure.patch(`/update-user-role/${user._id}`, {
             newRole: "student",
          });
          toast({

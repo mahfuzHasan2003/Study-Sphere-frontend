@@ -39,9 +39,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useFetchForGet } from "@/hooks/useFetchForGet";
 import { FaCheck, FaTimes, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import { Skeleton } from "@/components/ui/skeleton";
-import useAxiosPublic from "@/hooks/useAxiosPublic";
 import { convertToHoursAndMinutes } from "@/utilities/convertToHoursAndMinutes";
 import { format } from "date-fns";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 const ManageAllStudySessions = () => {
    const [currentPage, setCurrentPage] = useState(1);
@@ -57,7 +57,7 @@ const ManageAllStudySessions = () => {
    const [rejectionReason, setRejectionReason] = useState(null);
    const [rejectionFeedback, setRejectionFeedback] = useState(null);
    const { toast } = useToast();
-   const axiosPublic = useAxiosPublic();
+   const axiosSecure = useAxiosSecure();
 
    //    useEffect(() => {
    //       fetchSessions();
@@ -67,12 +67,12 @@ const ManageAllStudySessions = () => {
       isLoading: isPendingLoading,
       refetch: refetchPendingData,
       data: pendingSessions = [],
-   } = useFetchForGet(["pendingSessions"], "/pending-sessions");
+   } = useFetchForGet("secure", ["pendingSessions"], "/pending-sessions");
    const {
       isLoading: isApprovedLoading,
       refetch: refetchApprovedData,
       data: approvedSessions = [],
-   } = useFetchForGet(["approvedSessions"], "/approved-sessions");
+   } = useFetchForGet("secure", ["approvedSessions"], "/approved-sessions");
 
    // `/api/approved-sessions?page=${currentPage}&limit=10`;
 
@@ -101,7 +101,7 @@ const ManageAllStudySessions = () => {
 
    // cpnfirm approve session
    const confirmApprove = async () => {
-      const { data: result } = await axiosPublic.put(
+      const { data: result } = await axiosSecure.put(
          `/update-session/${selectedSession._id}`,
          {
             action: "approve",
@@ -128,7 +128,7 @@ const ManageAllStudySessions = () => {
 
    // reject session
    const confirmReject = async () => {
-      const { data: result } = await axiosPublic.put(
+      const { data: result } = await axiosSecure.put(
          `/update-session/${selectedSession._id}`,
          {
             action: "reject",
@@ -160,7 +160,7 @@ const ManageAllStudySessions = () => {
 
    // delete session
    const confirmDelete = async () => {
-      const { data: result } = await axiosPublic.delete(
+      const { data: result } = await axiosSecure.delete(
          `/delete-session-by-admin/${selectedSession._id}`
       );
       if (result?.success) {

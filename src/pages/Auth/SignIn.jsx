@@ -8,31 +8,33 @@ import { Eye, EyeOff } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import SocialLogin from "@/shared/SocialLogin";
 import ReCAPTCHA from "react-google-recaptcha";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
 import DataLoader from "@/shared/DataLoader";
 import { useToast } from "@/hooks/use-toast";
 
 const SignIn = () => {
    const [showPassword, setShowPassword] = useState(false);
-
    const [captchaValue, setCaptchaValue] = useState(null);
    const { authLoading, signInWithEmail, setAuthLoading } = useAuth();
    const { toast } = useToast();
    const navigate = useNavigate();
+   const { state } = useLocation();
    const {
       register,
       handleSubmit,
       formState: { errors },
    } = useForm();
+
    const onSubmit = (data) => {
+      const redirectTo = state?.userFrom || "/";
       signInWithEmail(data.email, data.password)
          .then(() => {
             toast({
                variant: "success",
                description: `Login Success!`,
             });
-            navigate("/");
+            navigate(redirectTo);
             setAuthLoading(false);
          })
          .catch((err) => {
@@ -113,12 +115,13 @@ const SignIn = () => {
                   {authLoading ? <DataLoader /> : "Sign In"}
                </Button>
             </form>
-            <SocialLogin />
+            <SocialLogin state={{ ...state }} />
             <p className='text-center'>
-               Don't have an account?&nbsp;
+               Don't have an account?{" "}
                <Link
                   to='/auth/signup'
-                  className='hover:font-semibold underline text-blue-500'>
+                  className='hover:font-semibold underline text-blue-500'
+                  state={{ ...state }}>
                   Sign Up
                </Link>
             </p>

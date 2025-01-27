@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import SocialLogin from "@/shared/SocialLogin";
 import ReCAPTCHA from "react-google-recaptcha";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import DataLoader from "@/shared/DataLoader";
@@ -33,7 +33,9 @@ const SignUp = () => {
    });
    const { toast } = useToast();
    const navigate = useNavigate();
+   const { state } = useLocation();
    const roleValue = watch("role");
+
    useEffect(() => {
       if (roleValue) {
          clearErrors("role");
@@ -45,13 +47,14 @@ const SignUp = () => {
    const [captchaValue, setCaptchaValue] = useState(null);
 
    const onSubmit = async (data) => {
+      const redirectTo = state?.userFrom || "/";
       // sign up
       await signUpWithEmail(data?.email, data?.password)
          .then(async () => {
             // uploading image to imagebb server
             const photoURL = await uploadToImageBB(data?.profileImage[0]);
-            // ipdate user profile
-            updateUserProfile({
+            // update user profile
+            await updateUserProfile({
                displayName: data?.name,
                photoURL,
             });
@@ -59,7 +62,7 @@ const SignUp = () => {
                variant: "success",
                description: `Account Create Success!`,
             });
-            navigate("/");
+            navigate(redirectTo);
             setAuthLoading(false);
 
             // add user data to database
@@ -234,7 +237,7 @@ const SignUp = () => {
                   {authLoading ? <DataLoader /> : "Sign Up"}
                </Button>
             </form>
-            <SocialLogin />
+            <SocialLogin state={{ ...state }} />
             <p className='text-center'>
                Already have an account?&nbsp;
                <Link

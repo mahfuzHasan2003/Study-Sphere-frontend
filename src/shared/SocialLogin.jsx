@@ -6,11 +6,12 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import useAxiosPublic from "@/hooks/useAxiosPublic";
 
-const SocialLogin = () => {
-   const { signInWithGoogle } = useAuth();
+const SocialLogin = ({ state }) => {
+   const { signInWithGoogle, signInWithGithub, setAuthLoading } = useAuth();
    const { toast } = useToast();
    const navigate = useNavigate();
    const axiosPublic = useAxiosPublic();
+   const redirectTo = state?.userFrom || "/";
 
    return (
       <div>
@@ -30,7 +31,7 @@ const SocialLogin = () => {
                               variant: "success",
                               description: "Login Successful",
                            });
-                           navigate("/");
+                           navigate(redirectTo);
                            axiosPublic.post("/post-user?social=true", {
                               userName: result.user.displayName,
                               userEmail: result.user.email,
@@ -38,16 +39,42 @@ const SocialLogin = () => {
                               userRole: "student",
                            });
                         })
-                        .catch((err) =>
+                        .catch((err) => {
+                           setAuthLoading(false);
                            toast({
                               variant: "error",
                               description: `Login Failed : ${err.message}`,
-                           })
-                        );
+                           });
+                        });
                   }}>
                   <FaGoogle size={20} />
                </Button>
-               <Button variant='outline' size='iconLG'>
+               <Button
+                  variant='outline'
+                  size='iconLG'
+                  onClick={() => {
+                     signInWithGithub()
+                        .then((result) => {
+                           toast({
+                              variant: "success",
+                              description: "Login Successful",
+                           });
+                           navigate(redirectTo);
+                           axiosPublic.post("/post-user?social=true", {
+                              userName: result.user.displayName,
+                              userEmail: result.user.email,
+                              userPhotoURL: result.user.photoURL,
+                              userRole: "student",
+                           });
+                        })
+                        .catch((err) => {
+                           setAuthLoading(false);
+                           toast({
+                              variant: "error",
+                              description: `Login Failed : ${err.message}`,
+                           });
+                        });
+                  }}>
                   <FaGithub size={20} />
                </Button>
             </div>

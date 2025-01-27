@@ -13,12 +13,12 @@ import {
 import useAuth from "@/hooks/useAuth";
 import DatePickerField from "@/shared/DatePickerField";
 import { uploadToImageBB } from "@/utilities/uploadToImageBB";
-import useAxiosPublic from "@/hooks/useAxiosPublic";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 const CreateStudySession = () => {
-   const axiosPublic = useAxiosPublic();
+   const axiosSecure = useAxiosSecure();
    const navigate = useNavigate();
    const { user } = useAuth();
    const {
@@ -50,7 +50,7 @@ const CreateStudySession = () => {
       const sessionBannerImage = await uploadToImageBB(data.sessionImage[0]);
 
       // post data to database
-      const { data: result } = await axiosPublic.post("/add-study-session", {
+      const { data: result } = await axiosSecure.post("/add-study-session", {
          sessionTitle,
          sessionDescription,
          sessionDuration,

@@ -21,19 +21,24 @@ import { useFetchForGet } from "@/hooks/useFetchForGet";
 import useAuth from "@/hooks/useAuth";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
-import useAxiosPublic from "@/hooks/useAxiosPublic";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 export default function CreateOrManageNotes() {
    const { user } = useAuth();
-   const axiosPublic = useAxiosPublic();
+   const axiosSecure = useAxiosSecure();
 
    const {
       isLoading,
       data: studentNotes = [],
       refetch,
-   } = useFetchForGet(["student_notes"], `/student-notes/${user?.email}`, {
-      enabled: !!user?.email,
-   });
+   } = useFetchForGet(
+      "secure",
+      ["student_notes"],
+      `/student-notes/${user?.email}`,
+      {
+         enabled: !!user?.email,
+      }
+   );
 
    const [newNote, setNewNote] = useState({
       title: "",
@@ -51,7 +56,7 @@ export default function CreateOrManageNotes() {
       e.preventDefault();
       if (!newNote.title || !newNote.description) return;
       try {
-         await axiosPublic.post("/student-notes", {
+         await axiosSecure.post("/student-notes", {
             title: newNote.title,
             date: new Date().toISOString(),
             description: newNote.description,
@@ -68,7 +73,7 @@ export default function CreateOrManageNotes() {
    // delete a note
    const handleDelete = async (id) => {
       try {
-         await axiosPublic.delete(`delete-note/${id}`);
+         await axiosSecure.delete(`delete-note/${id}`);
          refetch();
       } catch (error) {
          console.error("Error deleting note", error);
@@ -85,7 +90,7 @@ export default function CreateOrManageNotes() {
       e.preventDefault();
       if (!editingNote.title || !editingNote.description) return;
       try {
-         await axiosPublic.patch(
+         await axiosSecure.patch(
             `/update-note/${editingNote._id}`,
             editingNote
          );

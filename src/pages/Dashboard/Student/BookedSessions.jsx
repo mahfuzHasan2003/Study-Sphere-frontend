@@ -8,12 +8,13 @@ import {
 } from "@/components/ui/card";
 import useAuth from "@/hooks/useAuth";
 import { useFetchForGet } from "@/hooks/useFetchForGet";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const BookedSessions = () => {
    const { user } = useAuth();
    const navigate = useNavigate();
    const { data: studentBookedSessions = [] } = useFetchForGet(
+      "secure",
       ["studentBookedSessions", user?.email],
       `/student-booked-sessions/${user?.email}`,
       { enabled: !!user?.email }
@@ -56,7 +57,11 @@ const BookedSessions = () => {
                            View Details
                         </Button>
                         {session?.paymentStatus === "incomplete" ? (
-                           <Button>Pay Now</Button>
+                           <Link
+                              to={`/dashboard/make-payment/${session?.sessionId}`}
+                              state={{ bookedId: session?._id }}>
+                              <Button>Pay Now</Button>
+                           </Link>
                         ) : null}
                      </div>
                   </CardFooter>

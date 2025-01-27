@@ -5,22 +5,28 @@ import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import { Link } from "react-router-dom";
 import { useFetchForGet } from "@/hooks/useFetchForGet";
+import { startOfDay, parseISO, isAfter, isEqual, isBefore } from "date-fns";
 
 const StudySessionCard = ({ session }) => {
    const { data: tutorAvailableSessionsCount = {} } = useFetchForGet(
+      "public",
       ["tutorAvailableSessionsCount", session],
       `/approved-sessions-count?email=${session?.tutorEmail}`,
       { enabled: !!session?.tutorEmail }
    );
    const { data: averageRating = {} } = useFetchForGet(
+      "public",
       ["averageRating", session?._id],
-      `/get-average-review/${session?._id}`
+      `/get-average-rating/${session?._id}`
    );
 
+   const currentDate = startOfDay(new Date());
+   const startDate = startOfDay(parseISO(session?.registrationStartDate || ""));
+   const endDate = startOfDay(parseISO(session?.registrationEndDate || ""));
    const isOngoing =
-      new Date(session?.registrationStartDate) <= new Date() &&
-      new Date(session?.registrationEndDate) >= new Date();
-   const isUpcoming = new Date(session?.registrationStartDate) > new Date();
+      (isAfter(currentDate, startDate) || isEqual(currentDate, startDate)) &&
+      (isBefore(currentDate, endDate) || isEqual(currentDate, endDate));
+   const isUpcoming = isAfter(startDate, currentDate);
 
    return (
       <Card className='overflow-hidden flex flex-col'>

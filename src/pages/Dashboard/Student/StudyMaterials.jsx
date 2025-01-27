@@ -44,6 +44,7 @@ const StudyMaterials = () => {
    const [allGroupedMaterials, setAllGroupedMaterials] = useState([]);
    const [selectedSession, setSelectedSession] = useState(null);
    const { data: allMaterialsForStudent } = useFetchForGet(
+      "secure",
       ["allMaterialsForStudent"],
       `/get-student-materials/${user?.email}`,
       { enabled: !!user?.email }

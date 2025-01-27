@@ -9,7 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import useAxiosPublic from "@/hooks/useAxiosPublic";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 import { useFetchForGet } from "@/hooks/useFetchForGet";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -17,7 +17,7 @@ import { useNavigate, useParams } from "react-router-dom";
 const UpdateMaterial = () => {
    const { id } = useParams();
    const navigate = useNavigate();
-   const axiosPublic = useAxiosPublic();
+   const axiosSecure = useAxiosSecure();
    const {
       register,
       handleSubmit,
@@ -27,6 +27,7 @@ const UpdateMaterial = () => {
 
    // fetch data from backend
    const { data: material, refetch } = useFetchForGet(
+      "secure",
       ["UpdateMaterial", id],
       `/get-tutor-material/${id}`
    );
@@ -48,7 +49,7 @@ const UpdateMaterial = () => {
          navigate("/dashboard/upload-and-manage-materials");
          return;
       }
-      const { data: result } = await axiosPublic.patch(
+      const { data: result } = await axiosSecure.patch(
          `/update-material/${id}`,
          {
             materialTitle,

@@ -29,28 +29,27 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
-import useAxiosPublic from "@/hooks/useAxiosPublic";
 import { toast } from "@/hooks/use-toast";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 const TutorSessions = () => {
-   const axiosPublic = useAxiosPublic();
+   const axiosSecure = useAxiosSecure();
    const { user, authLoading } = useAuth();
    const [selectedSession, setSelectedSession] = useState(null);
    const [isSeeReasonModalOpen, setIsSeeReasonModalOpen] = useState(false);
-   const {
-      data: approvedTutorSessions,
-      isLoading: isApprovedLoading,
-      refetch: refetchApproved,
-   } = useFetchForGet(
-      ["approvedTutorSessions"],
-      `/tutor-study-sessions?email=${user?.email}&status=approved`,
-      { enabled: !!user?.email }
-   );
+   const { data: approvedTutorSessions, isLoading: isApprovedLoading } =
+      useFetchForGet(
+         "secure",
+         ["approvedTutorSessions"],
+         `/tutor-study-sessions?email=${user?.email}&status=approved`,
+         { enabled: !!user?.email }
+      );
    const {
       data: pendingTutorSessions,
       isLoading: isPendingLoading,
       refetch: refetchPending,
    } = useFetchForGet(
+      "secure",
       ["pendingTutorSessions"],
       `/tutor-study-sessions?email=${user?.email}&status=pending`,
       { enabled: !!user?.email }
@@ -60,6 +59,7 @@ const TutorSessions = () => {
       isLoading: isRejectedLoading,
       refetch: refetchRejected,
    } = useFetchForGet(
+      "secure",
       ["rejectedTutorSessions"],
       `/tutor-study-sessions?email=${user?.email}&status=rejected`,
       { enabled: !!user?.email }
@@ -68,7 +68,7 @@ const TutorSessions = () => {
       isApprovedLoading || isPendingLoading || isRejectedLoading || authLoading;
 
    const sendReviewRequest = async (session) => {
-      const { data: result } = await axiosPublic.patch(
+      const { data: result } = await axiosSecure.patch(
          `/review-rejected-session/${session._id}`
       );
       if (result.success) {

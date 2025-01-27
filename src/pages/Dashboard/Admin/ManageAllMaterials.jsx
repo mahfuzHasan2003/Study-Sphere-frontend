@@ -22,16 +22,16 @@ import {
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
-import useAxiosPublic from "@/hooks/useAxiosPublic";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 import { useFetchForGet } from "@/hooks/useFetchForGet";
 import { groupMaterialsBySessionId } from "@/utilities/groupMaterialsBySessionId";
 import { Copy, ExternalLink, MoreVertical, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const ManageAllMaterials = () => {
-   const axiosPublic = useAxiosPublic();
+   const axiosSecure = useAxiosSecure();
    const { data: allMaterials = [], refetch: refetchAllMaterials } =
-      useFetchForGet(["allMaterials"], "/all-materials");
+      useFetchForGet("secure", ["allMaterials"], "/all-materials");
    const [allGroupedMaterials, setAllGroupedMaterials] = useState([]);
    const [selectedSession, setSelectedSession] = useState(null);
    const [isConfirmDeleteDialogOpen, setIsConfirmDeleteDialogOpen] =
@@ -63,7 +63,7 @@ const ManageAllMaterials = () => {
    };
    // delete a material
    const handleDeleteMaterial = async () => {
-      const { data: result } = await axiosPublic.delete(
+      const { data: result } = await axiosSecure.delete(
          `/delete-material-by-admin/${selectedMaterilId}`
       );
       if (result.success) {
