@@ -74,12 +74,11 @@ const CheckoutForm = ({ sessionId, bookedId, session }) => {
       if (paymentError) {
          setPaymentLoading(false);
          setPaymentError(paymentError?.message);
+         toast({
+            variant: "error",
+            description: `Error: ${paymentError?.message}`,
+         });
       }
-
-      // toast({
-      //    variant: "error",
-      //    description: `Error: ${result.message}`,
-      // });
    };
 
    return (

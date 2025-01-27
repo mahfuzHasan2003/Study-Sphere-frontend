@@ -46,7 +46,6 @@ const SignIn = () => {
          });
    };
 
-   // TODO: redirect to the state page
    return (
       <div className='max-w-8xl mx-auto flex items-center justify-between *:flex-1 mt-10'>
          <div className='max-w-xl mx-auto border p-5 rounded-md'>

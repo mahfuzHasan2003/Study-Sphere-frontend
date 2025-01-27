@@ -364,7 +364,7 @@ const SessionDetails = () => {
                            {session.tutorName}
                         </h2>
                         <p className='text-sm text-muted-foreground'>
-                           {tutorAvailableSessionsCount?.count || 0} session(s)
+                           {tutorAvailableSessionsCount?.count || 0} course(s)
                            available
                         </p>
                      </div>

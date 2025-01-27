@@ -21,6 +21,8 @@ import TutorRoute from "@/private/TutorRoute";
 import StudentRoute from "@/private/StudentRoute";
 import StudyMaterials from "@/pages/Dashboard/Student/StudyMaterials";
 import Payment from "@/pages/payment/Payment";
+import PrivateRoute from "@/private/PrivateRoute";
+import DashboardWelcome from "@/pages/Dashboard/DashboardWelcome";
 
 const routes = createBrowserRouter([
    {
@@ -59,8 +61,12 @@ const routes = createBrowserRouter([
       children: [
          // dashboard welcome page
          {
-            path: "/dashboard",
-            element: <h1> Dashboard Home</h1>,
+            index: true,
+            element: (
+               <PrivateRoute>
+                  <DashboardWelcome />
+               </PrivateRoute>
+            ),
          },
          // ------------- student routes ----------
          {

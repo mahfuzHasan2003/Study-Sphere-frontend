@@ -15,7 +15,7 @@ const stripePromise = loadStripe(import.meta.env.VITE_Payment_PK);
 const Payment = () => {
    const { id } = useParams();
    const { state } = useLocation();
-   const { data: session = {}, isLoading: sessionLoading } = useFetchForGet(
+   const { data: session = {} } = useFetchForGet(
       "public",
       ["SessionDetails", id],
       `/get-session-details/${id}`

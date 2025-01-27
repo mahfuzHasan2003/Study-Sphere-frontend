@@ -71,7 +71,7 @@ const StudySessionCard = ({ session }) => {
                <div>
                   <h3 className='font-semibold'>{session?.tutorName}</h3>
                   <p className='text-sm text-muted-foreground'>
-                     {tutorAvailableSessionsCount?.count || 0} session(s)
+                     {tutorAvailableSessionsCount?.count || 0} course(s)
                      available
                   </p>
                </div>
