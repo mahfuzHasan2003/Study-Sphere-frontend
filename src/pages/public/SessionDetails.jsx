@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { isAfter, isBefore, isEqual, parseISO, startOfDay } from "date-fns";
 import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { formatInTimeZone } from "date-fns-tz";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
+import { Helmet } from "react-helmet";
 
 const SessionDetails = () => {
    const { id } = useParams();
@@ -244,6 +245,9 @@ const SessionDetails = () => {
       <SessionDetailsSkeleton />
    ) : (
       <div className='max-w-8xl mx-auto mt-10 space-y-12 px-4'>
+         <Helmet>
+            <title> Session details | Study Sphere</title>
+         </Helmet>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Session Details
          </h2>

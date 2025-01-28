@@ -14,6 +14,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const AllStudySessions = () => {
    const navigate = useNavigate();
@@ -97,6 +98,9 @@ const AllStudySessions = () => {
 
    return (
       <div className='max-w-8xl mx-auto px-4 mt-10'>
+         <Helmet>
+            <title> All Sessions | Study Sphere</title>
+         </Helmet>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Keep exploring and growing your knowledge.
          </h2>

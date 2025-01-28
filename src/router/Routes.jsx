@@ -12,7 +12,7 @@ import AllStudySessions from "@/pages/public/AllStudySessions";
 import SessionDetails from "@/pages/public/SessionDetails";
 import Home from "@/pages/public/Home";
 import UploadAndManageMaterials from "@/pages/Dashboard/Tutor/UploadAndManageMaterials";
-import UpdateMaterial from "@/pages/UpdateMaterial";
+import UpdateMaterial from "@/pages/Dashboard/Tutor/UpdateMaterial";
 import ManageAllMaterials from "@/pages/Dashboard/Admin/ManageAllMaterials";
 import BookedSessions from "@/pages/Dashboard/Student/BookedSessions";
 import AdminRoute from "@/private/AdminRoute";

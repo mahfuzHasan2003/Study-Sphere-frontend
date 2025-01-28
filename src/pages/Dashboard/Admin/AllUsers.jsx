@@ -33,6 +33,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import Pagination from "@/shared/Pagination";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const AllUsers = () => {
    const navigate = useNavigate();
@@ -49,7 +50,7 @@ const AllUsers = () => {
 
    const TableSkeleton = () => (
       <>
-         {[...Array(5)].map((_, index) => (
+         {[...Array(10)].map((_, index) => (
             <TableRow key={index}>
                <TableCell>
                   <Skeleton className='h-4 w-6' />
@@ -123,6 +124,9 @@ const AllUsers = () => {
 
    return (
       <div>
+         <Helmet>
+            <title> Users | Dashboard - Study Sphere</title>
+         </Helmet>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Manage All Users
          </h2>

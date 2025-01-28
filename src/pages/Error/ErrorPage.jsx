@@ -1,11 +1,15 @@
 import errorAnimation from "@/assets/Error-Animation.json";
 import { Button } from "@/components/ui/button";
 import Lottie from "lottie-react";
+import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 
 const ErrorPage = () => {
    return (
       <div className='h-full grid place-items-center min-h-svh'>
+         <Helmet>
+            <title> Error | Study Sphere</title>
+         </Helmet>
          <div className='text-center space-y-3'>
             <Lottie
                animationData={errorAnimation}

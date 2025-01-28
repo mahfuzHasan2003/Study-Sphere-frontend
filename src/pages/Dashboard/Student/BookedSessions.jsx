@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import useAuth from "@/hooks/useAuth";
 import { useFetchForGet } from "@/hooks/useFetchForGet";
+import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 
 const BookedSessions = () => {
@@ -21,6 +22,9 @@ const BookedSessions = () => {
    );
    return (
       <div>
+         <Helmet>
+            <title> My booked sessions | Dashboard - Study Sphere </title>
+         </Helmet>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Sessions that I have booked
          </h2>
@@ -42,7 +46,7 @@ const BookedSessions = () => {
                      ) : (
                         <CardDescription className='text-green-500'>
                            Check all materials for the session provided by tutor
-                           from the 'Study Materials' page.
+                           in the 'Study Materials' page.
                         </CardDescription>
                      )}
                   </CardHeader>

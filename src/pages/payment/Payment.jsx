@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { useLocation, useParams } from "react-router-dom";
 import { useFetchForGet } from "@/hooks/useFetchForGet";
+import { Helmet } from "react-helmet";
 
 const stripePromise = loadStripe(import.meta.env.VITE_Payment_PK);
 const Payment = () => {
@@ -22,6 +23,9 @@ const Payment = () => {
    );
    return (
       <div className='flex items-center justify-center mt-32 max-w-md mx-auto'>
+         <Helmet>
+            <title> Make Payment | Dashboard - Study Sphere</title>
+         </Helmet>
          <div>
             <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
                <span className='text-muted-foreground'>Payment for:</span>{" "}

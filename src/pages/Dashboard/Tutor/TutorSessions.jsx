@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/popover";
 import { toast } from "@/hooks/use-toast";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
+import { Helmet } from "react-helmet";
 
 const TutorSessions = () => {
    const axiosSecure = useAxiosSecure();
@@ -87,6 +88,9 @@ const TutorSessions = () => {
    };
    return (
       <div>
+         <Helmet>
+            <title> My added sessions | Dashboard - Study Sphere </title>
+         </Helmet>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             View and manage your sessions
          </h2>

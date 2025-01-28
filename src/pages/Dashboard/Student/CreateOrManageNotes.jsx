@@ -22,6 +22,7 @@ import useAuth from "@/hooks/useAuth";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
+import { Helmet } from "react-helmet";
 
 export default function CreateOrManageNotes() {
    const { user } = useAuth();
@@ -110,6 +111,9 @@ export default function CreateOrManageNotes() {
 
    return (
       <div className=''>
+         <Helmet>
+            <title> Create & manage Notes | Dashboard - Study Sphere </title>
+         </Helmet>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Create and manage your notes
          </h2>

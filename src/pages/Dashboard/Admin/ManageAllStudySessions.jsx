@@ -42,6 +42,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { convertToHoursAndMinutes } from "@/utilities/convertToHoursAndMinutes";
 import { format } from "date-fns";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
+import { Helmet } from "react-helmet";
 
 const ManageAllStudySessions = () => {
    const [currentPage, setCurrentPage] = useState(1);
@@ -59,6 +60,7 @@ const ManageAllStudySessions = () => {
    const { toast } = useToast();
    const axiosSecure = useAxiosSecure();
 
+   // TODO: apply pagination
    //    useEffect(() => {
    //       fetchSessions();
    //    }, [currentPage]);
@@ -316,6 +318,9 @@ const ManageAllStudySessions = () => {
 
    return (
       <div>
+         <Helmet>
+            <title> Sessions | Dashboard - Study Sphere</title>
+         </Helmet>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Manage All Study Sessions
          </h2>

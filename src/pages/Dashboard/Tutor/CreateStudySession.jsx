@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import DataLoader from "@/shared/DataLoader";
+import { Helmet } from "react-helmet";
 
 const CreateStudySession = () => {
    const [sessionUploading, setSessionUploading] = useState(false);
@@ -104,6 +105,9 @@ const CreateStudySession = () => {
 
    return (
       <div>
+         <Helmet>
+            <title> Add Session | Dashboard - Study Sphere </title>
+         </Helmet>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Create a new study session
          </h2>

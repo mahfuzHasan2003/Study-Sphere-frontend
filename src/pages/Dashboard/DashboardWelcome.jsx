@@ -1,10 +1,14 @@
 import dashboardWelcomeAnimation from "@/assets/Dashboard-welcome.json";
 import GetUserWithRole from "@/shared/GetUserWithRole";
 import Lottie from "lottie-react";
+import { Helmet } from "react-helmet";
 const DashboardWelcome = () => {
    const { userRole = "", userName = "Anonymous" } = GetUserWithRole();
    return (
       <div className='h-full grid place-items-center'>
+         <Helmet>
+            <title> Dashboard | Study Sphere </title>
+         </Helmet>
          <div className='text-center space-y-2'>
             <Lottie
                animationData={dashboardWelcomeAnimation}

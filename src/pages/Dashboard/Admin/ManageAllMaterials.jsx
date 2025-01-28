@@ -28,6 +28,7 @@ import { useFetchForGet } from "@/hooks/useFetchForGet";
 import { groupMaterialsBySessionId } from "@/utilities/groupMaterialsBySessionId";
 import { Copy, ExternalLink, MoreVertical, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 
 const ManageAllMaterials = () => {
    const axiosSecure = useAxiosSecure();
@@ -113,6 +114,9 @@ const ManageAllMaterials = () => {
 
    return (
       <div>
+         <Helmet>
+            <title> Materials | Dashboard - Study Sphere</title>
+         </Helmet>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Manage All Materials
          </h2>

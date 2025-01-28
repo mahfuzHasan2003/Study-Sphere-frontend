@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import { useFetchForGet } from "@/hooks/useFetchForGet";
+import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -74,6 +75,9 @@ const UpdateMaterial = () => {
 
    return (
       <div className='flex items-center justify-center mt-32 max-w-md mx-auto'>
+         <Helmet>
+            <title> Update material | Dashboard - Study Sphere </title>
+         </Helmet>
          <Card className='w-full'>
             <CardHeader>
                <CardTitle>Update Material</CardTitle>

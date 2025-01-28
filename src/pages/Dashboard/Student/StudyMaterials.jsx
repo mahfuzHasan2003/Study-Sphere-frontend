@@ -26,6 +26,7 @@ import { useFetchForGet } from "@/hooks/useFetchForGet";
 import { groupMaterialsBySessionId } from "@/utilities/groupMaterialsBySessionId";
 import { Copy, Download, ExternalLink, MoreVertical } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 
 function Modal({ isOpen, onClose, title, children }) {
    return (
@@ -99,6 +100,9 @@ const StudyMaterials = () => {
 
    return (
       <div className='container mx-auto p-4'>
+         <Helmet>
+            <title> My materials | Dashboard - Study Sphere </title>
+         </Helmet>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             All of your materials
          </h2>

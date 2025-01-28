@@ -49,6 +49,7 @@ import { groupMaterialsBySessionId } from "@/utilities/groupMaterialsBySessionId
 import { useNavigate } from "react-router-dom";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import DataLoader from "@/shared/DataLoader";
+import { Helmet } from "react-helmet";
 
 function Modal({ isOpen, onClose, title, children }) {
    return (
@@ -180,6 +181,12 @@ export default function UploadAndManageMaterials() {
 
    return (
       <div className='container mx-auto p-4'>
+         <Helmet>
+            <title>
+               {" "}
+               Upload & manage materials | Dashboard - Study Sphere{" "}
+            </title>
+         </Helmet>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Upload & manage session materials
          </h2>
