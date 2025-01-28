@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
-import ErrorPage from "../pages/public/ErrorPage";
 import SignIn from "@/pages/Auth/SignIn";
 import SignUp from "@/pages/Auth/SignUp";
 import DashboardLayout from "@/layouts/DashboardLayout";
@@ -23,6 +22,7 @@ import StudyMaterials from "@/pages/Dashboard/Student/StudyMaterials";
 import Payment from "@/pages/payment/Payment";
 import PrivateRoute from "@/private/PrivateRoute";
 import DashboardWelcome from "@/pages/Dashboard/DashboardWelcome";
+import ErrorPage from "@/pages/Error/ErrorPage";
 
 const routes = createBrowserRouter([
    {

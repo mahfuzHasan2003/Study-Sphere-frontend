@@ -53,7 +53,9 @@ const SignIn = () => {
             <form onSubmit={handleSubmit(onSubmit)} className='space-y-3'>
                {/* Email */}
                <div>
-                  <Label>Email</Label>
+                  <Label>
+                     Email<span className='text-red-500'>*</span>
+                  </Label>
                   <Input
                      type='email'
                      placeholder='mahfuz@domain.com'
@@ -69,7 +71,9 @@ const SignIn = () => {
                </div>
                {/*  password */}
                <div>
-                  <Label>Password</Label>
+                  <Label>
+                     Password<span className='text-red-500'>*</span>
+                  </Label>
                   <div className='relative'>
                      <Input
                         type={showPassword ? "text" : "password"}

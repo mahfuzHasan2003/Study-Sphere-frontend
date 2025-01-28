@@ -443,7 +443,6 @@ const SessionDetails = () => {
          ) : null}
 
          {/* Reviews Section */}
-         {/*  TODO: add column to parent*/}
          {reviews && reviews.length > 0 ? (
             <div>
                <h2 className='text-2xl font-bold mb-4'>Reviews</h2>

@@ -10,7 +10,10 @@ const Footer = () => {
                <a href='#' className='text-sm text-gray-300 hover:text-white'>
                   Terms of Service
                </a>
-               <a href='#' className='text-sm text-gray-300 hover:text-white'>
+               <a
+                  href='https://www.linkedin.com/in/mahfuzhasan2003/'
+                  className='text-sm text-gray-300 hover:text-white'
+                  target='_blank'>
                   Contact Us
                </a>
             </div>

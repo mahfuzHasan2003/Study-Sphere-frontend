@@ -90,7 +90,10 @@ const SignUp = () => {
                {/* Role */}
                <div className=''>
                   <div className='flex gap-5 items-center'>
-                     <p>What is your role?</p>
+                     <p>
+                        What is your role?
+                        <span className='text-red-500'>*</span>
+                     </p>
                      <RadioGroup
                         onValueChange={(value) => setValue("role", value)}
                         className='flex gap-5'>
@@ -124,7 +127,9 @@ const SignUp = () => {
                </div>
                {/* Name */}
                <div>
-                  <Label>Full Name</Label>
+                  <Label>
+                     Full Name<span className='text-red-500'>*</span>
+                  </Label>
                   <Input
                      type='text'
                      placeholder='Mahfuz Hasan'
@@ -145,7 +150,9 @@ const SignUp = () => {
                </div>
                {/* Photo */}
                <div>
-                  <Label>Profile Image</Label>
+                  <Label>
+                     Profile Image<span className='text-red-500'>*</span>
+                  </Label>
                   <Input
                      type='file'
                      {...register("profileImage", {
@@ -166,7 +173,9 @@ const SignUp = () => {
                </div>
                {/* Email */}
                <div>
-                  <Label>Email</Label>
+                  <Label>
+                     Email<span className='text-red-500'>*</span>
+                  </Label>
                   <Input
                      type='email'
                      placeholder='mahfuz@domain.com'
@@ -186,7 +195,9 @@ const SignUp = () => {
                </div>
                {/*  password */}
                <div>
-                  <Label>Password</Label>
+                  <Label>
+                     Password<span className='text-red-500'>*</span>
+                  </Label>
                   <div className='relative'>
                      <Input
                         type={showPassword ? "text" : "password"}

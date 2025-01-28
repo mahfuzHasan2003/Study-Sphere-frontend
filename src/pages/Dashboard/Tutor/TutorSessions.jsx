@@ -101,9 +101,13 @@ const TutorSessions = () => {
          <div className='max-w-3xl'>
             <Tabs defaultValue='approved' className=''>
                <TabsList>
-                  <TabsTrigger value='approved'>Approved Sessions</TabsTrigger>
-                  <TabsTrigger value='pending'>Pending Sessions</TabsTrigger>
-                  <TabsTrigger value='rejected'>Rejected Sessions</TabsTrigger>
+                  <TabsTrigger value='approved'>
+                     ✅Approved Sessions
+                  </TabsTrigger>
+                  <TabsTrigger value='pending'>⌚Pending Sessions</TabsTrigger>
+                  <TabsTrigger value='rejected'>
+                     ❌Rejected Sessions
+                  </TabsTrigger>
                </TabsList>
                {/* approved sessions */}
                <TabsContent value='approved'>

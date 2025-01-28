@@ -16,8 +16,10 @@ import { uploadToImageBB } from "@/utilities/uploadToImageBB";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
+import DataLoader from "@/shared/DataLoader";
 
 const CreateStudySession = () => {
+   const [sessionUploading, setSessionUploading] = useState(false);
    const axiosSecure = useAxiosSecure();
    const navigate = useNavigate();
    const { user } = useAuth();
@@ -36,6 +38,7 @@ const CreateStudySession = () => {
    const classStartDate = watch("classStartDate");
 
    const onSubmit = async (data) => {
+      setSessionUploading(true);
       const {
          sessionTitle,
          sessionDescription,
@@ -78,6 +81,7 @@ const CreateStudySession = () => {
             description: `Error: ${result.message}`,
          });
       }
+      setSessionUploading(false);
    };
 
    const handleImageChange = (e) => {
@@ -280,8 +284,15 @@ const CreateStudySession = () => {
                      </div>
                   </div>
 
-                  <Button type='submit' className='w-full'>
-                     Create Session
+                  <Button
+                     type='submit'
+                     className='w-full'
+                     disabled={sessionUploading}>
+                     {sessionUploading ? (
+                        <DataLoader text='Uploading session...' />
+                     ) : (
+                        "Create Session"
+                     )}
                   </Button>
                </form>
             </CardContent>
