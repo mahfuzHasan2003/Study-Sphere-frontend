@@ -1,6 +1,6 @@
 import axios from "axios";
 const instance = axios.create({
-   baseURL: "http://localhost:3000",
+   baseURL: "https://study-sphere-backend-phi.vercel.app",
 });
 const useAxiosPublic = () => {
    return instance;

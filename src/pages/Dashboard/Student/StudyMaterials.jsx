@@ -19,6 +19,7 @@ import {
    DropdownMenuItem,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import useAuth from "@/hooks/useAuth";
 import { useFetchForGet } from "@/hooks/useFetchForGet";
@@ -43,12 +44,13 @@ const StudyMaterials = () => {
    const { user } = useAuth();
    const [allGroupedMaterials, setAllGroupedMaterials] = useState([]);
    const [selectedSession, setSelectedSession] = useState(null);
-   const { data: allMaterialsForStudent } = useFetchForGet(
-      "secure",
-      ["allMaterialsForStudent"],
-      `/get-student-materials/${user?.email}`,
-      { enabled: !!user?.email }
-   );
+   const { data: allMaterialsForStudent, isLoading: isMaterialsLoading } =
+      useFetchForGet(
+         "secure",
+         ["allMaterialsForStudent"],
+         `/get-student-materials/${user?.email}`,
+         { enabled: !!user?.email }
+      );
    useEffect(() => {
       setAllGroupedMaterials(groupMaterialsBySessionId(allMaterialsForStudent));
    }, [allMaterialsForStudent]);
@@ -74,39 +76,65 @@ const StudyMaterials = () => {
       URL.revokeObjectURL(link.href);
    };
 
+   // skeleton loading
+   const MaterialSkeleton = () => (
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+         {Array.from({ length: 5 }).map((_, index) => (
+            <div key={index} className='p-4'>
+               <Card>
+                  <CardHeader>
+                     <Skeleton className='h-8 rounded-md' />
+                  </CardHeader>
+                  <CardContent>
+                     <Skeleton className='h-4 w-3/4 rounded-md' />
+                  </CardContent>
+                  <CardFooter>
+                     <Skeleton className='h-12 w-32 rounded-md' />
+                  </CardFooter>
+               </Card>
+            </div>
+         ))}
+      </div>
+   );
+
    return (
       <div className='container mx-auto p-4'>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             All of your materials
          </h2>
-         {allGroupedMaterials.length > 0 ? (
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-               {allGroupedMaterials?.map((matWithDetails) => (
-                  <Card key={matWithDetails?.sessionId}>
-                     <CardHeader>
-                        <CardTitle>{matWithDetails?.sessionTitle}</CardTitle>
-                     </CardHeader>
-                     <CardContent>
-                        <p>
-                           {matWithDetails?.materials?.length} material(s)
-                           available
-                        </p>
-                     </CardContent>
-                     <CardFooter>
-                        <Button
-                           onClick={() => {
-                              setSelectedSession(matWithDetails);
-                           }}>
-                           View Materials
-                        </Button>
-                     </CardFooter>
-                  </Card>
-               ))}
-            </div>
+
+         {isMaterialsLoading ? (
+            <MaterialSkeleton />
          ) : (
-            <p className='text-red-500 mt-5'>
-               No materials available for you!!
-            </p>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+               {allGroupedMaterials.length > 0 ? (
+                  allGroupedMaterials?.map((matWithDetails) => (
+                     <Card key={matWithDetails?.sessionId}>
+                        <CardHeader>
+                           <CardTitle>{matWithDetails?.sessionTitle}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                           <p>
+                              {matWithDetails?.materials?.length} material(s)
+                              available
+                           </p>
+                        </CardContent>
+                        <CardFooter>
+                           <Button
+                              onClick={() => {
+                                 setSelectedSession(matWithDetails);
+                              }}>
+                              View Materials
+                           </Button>
+                        </CardFooter>
+                     </Card>
+                  ))
+               ) : (
+                  <p className='text-red-500 mt-5 col-span-full'>
+                     No materials available for you!!
+                  </p>
+               )}
+            </div>
          )}
 
          {selectedSession && (

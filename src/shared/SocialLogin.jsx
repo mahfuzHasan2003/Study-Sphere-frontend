@@ -26,13 +26,13 @@ const SocialLogin = ({ state }) => {
                   size='iconLG'
                   onClick={() => {
                      signInWithGoogle()
-                        .then((result) => {
+                        .then(async (result) => {
                            toast({
                               variant: "success",
                               description: "Login Successful",
                            });
                            navigate(redirectTo);
-                           axiosPublic.post("/post-user?social=true", {
+                           await axiosPublic.post("/post-user?social=true", {
                               userName: result.user.displayName,
                               userEmail: result.user.email,
                               userPhotoURL: result.user.photoURL,
@@ -54,16 +54,17 @@ const SocialLogin = ({ state }) => {
                   size='iconLG'
                   onClick={() => {
                      signInWithGithub()
-                        .then((result) => {
+                        .then(async (result) => {
+                           setAuthLoading(false);
                            toast({
                               variant: "success",
                               description: "Login Successful",
                            });
                            navigate(redirectTo);
-                           axiosPublic.post("/post-user?social=true", {
-                              userName: result.user.displayName,
-                              userEmail: result.user.email,
-                              userPhotoURL: result.user.photoURL,
+                           await axiosPublic.post("/post-user?social=true", {
+                              userName: result?.user.displayName,
+                              userEmail: result?.user.email,
+                              userPhotoURL: result?.user.photoURL,
                               userRole: "student",
                            });
                         })

@@ -21,6 +21,7 @@ import {
    DropdownMenuItem,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import { useFetchForGet } from "@/hooks/useFetchForGet";
@@ -30,8 +31,11 @@ import { useEffect, useState } from "react";
 
 const ManageAllMaterials = () => {
    const axiosSecure = useAxiosSecure();
-   const { data: allMaterials = [], refetch: refetchAllMaterials } =
-      useFetchForGet("secure", ["allMaterials"], "/all-materials");
+   const {
+      data: allMaterials = [],
+      refetch: refetchAllMaterials,
+      isLoading: isMaterialLoading,
+   } = useFetchForGet("secure", ["allMaterials"], "/all-materials");
    const [allGroupedMaterials, setAllGroupedMaterials] = useState([]);
    const [selectedSession, setSelectedSession] = useState(null);
    const [isConfirmDeleteDialogOpen, setIsConfirmDeleteDialogOpen] =
@@ -81,35 +85,66 @@ const ManageAllMaterials = () => {
       setSelectedSession(null);
    };
 
+   // skeleton loading
+   const MaterialSkeleton = () => (
+      <>
+         {Array.from({ length: 8 }).map((_, index) => (
+            <div key={index} className='p-4'>
+               <Card>
+                  <CardHeader>
+                     <CardTitle>
+                        <Skeleton className='h-8 rounded-md' />
+                     </CardTitle>
+                     <CardDescription>
+                        <Skeleton className='h-2 w-1/2' />
+                     </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                     <Skeleton className='h-4 w-3/4 rounded-md' />
+                  </CardContent>
+                  <CardFooter>
+                     <Skeleton className='h-12 w-32 rounded-md' />
+                  </CardFooter>
+               </Card>
+            </div>
+         ))}
+      </>
+   );
+
    return (
       <div>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
             Manage All Materials
          </h2>
          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {allGroupedMaterials?.map((matWithDetails) => (
-               <Card key={matWithDetails?.sessionId}>
-                  <CardHeader>
-                     <CardTitle>{matWithDetails?.sessionTitle}</CardTitle>
-                     <CardDescription>
-                        Tutor email: {matWithDetails?.tutorEmail}
-                     </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                     <p>
-                        {matWithDetails?.materials?.length} material(s) uploaded
-                     </p>
-                  </CardContent>
-                  <CardFooter>
-                     <Button
-                        onClick={() => {
-                           setSelectedSession(matWithDetails);
-                        }}>
-                        View Materials
-                     </Button>
-                  </CardFooter>
-               </Card>
-            ))}
+            {isMaterialLoading ? (
+               <MaterialSkeleton />
+            ) : (
+               allGroupedMaterials?.map((matWithDetails) => (
+                  <Card key={matWithDetails?.sessionId}>
+                     <CardHeader>
+                        <CardTitle>{matWithDetails?.sessionTitle}</CardTitle>
+                        <CardDescription>
+                           Tutor email: {matWithDetails?.tutorEmail}
+                        </CardDescription>
+                     </CardHeader>
+                     <CardContent>
+                        <p>
+                           {matWithDetails?.materials?.length} material(s)
+                           uploaded
+                        </p>
+                     </CardContent>
+                     <CardFooter>
+                        <Button
+                           onClick={() => {
+                              setSelectedSession(matWithDetails);
+                           }}>
+                           View Materials
+                        </Button>
+                     </CardFooter>
+                  </Card>
+               ))
+            )}
          </div>
 
          {/* Modal for viewing session materials */}
