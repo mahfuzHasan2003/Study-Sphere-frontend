@@ -447,34 +447,38 @@ const SessionDetails = () => {
          {reviews && reviews.length > 0 ? (
             <div>
                <h2 className='text-2xl font-bold mb-4'>Reviews</h2>
-               {reviews.map((review) => (
-                  <Card key={review?._id} className='mb-4 max-w-md rounded-md'>
-                     <CardContent className='p-4 space-y-2'>
-                        <div className='flex gap-3 items-center'>
-                           <img
-                              src={review?.studentPhotoURL}
-                              alt={review?.studentName}
-                              referrerPolicy='no-referrer'
-                              className='max-w-14 aspect-square object-cover object-center rounded-sm'
-                           />
-                           <div>
-                              <h3 className='font-semibold'>
-                                 {review?.studentName}
-                              </h3>
-                              <Rating
-                                 value={review?.rating}
-                                 readOnly
-                                 style={{ maxWidth: 100 }}
+               <div className='columns-1 md:columns-2 lg:columns-3 *:break-inside-avoid'>
+                  {reviews.map((review) => (
+                     <Card
+                        key={review?._id}
+                        className='mb-4 max-w-md rounded-md'>
+                        <CardContent className='p-4 space-y-2'>
+                           <div className='flex gap-3 items-center'>
+                              <img
+                                 src={review?.studentPhotoURL}
+                                 alt={review?.studentName}
+                                 referrerPolicy='no-referrer'
+                                 className='max-w-14 aspect-square object-cover object-center rounded-sm'
                               />
+                              <div>
+                                 <h3 className='font-semibold'>
+                                    {review?.studentName}
+                                 </h3>
+                                 <Rating
+                                    value={review?.rating}
+                                    readOnly
+                                    style={{ maxWidth: 100 }}
+                                 />
+                              </div>
                            </div>
-                        </div>
-                        <Separator />
-                        <p className='text-muted-foreground'>
-                           {review?.review}
-                        </p>
-                     </CardContent>
-                  </Card>
-               ))}
+                           <Separator />
+                           <p className='text-muted-foreground'>
+                              {review?.review}
+                           </p>
+                        </CardContent>
+                     </Card>
+                  ))}
+               </div>
             </div>
          ) : null}
       </div>

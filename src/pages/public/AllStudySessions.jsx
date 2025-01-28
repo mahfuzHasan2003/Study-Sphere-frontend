@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
    Select,
@@ -13,24 +13,33 @@ import Pagination from "@/shared/Pagination";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AllStudySessions = () => {
-   const [currentPage, setCurrentPage] = useState(1);
-   //    const [totalPages, setTotalPages] = useState(1);
-   const [searchValue, setSearchValue] = useState("");
-   const [filterBy, setFilterBy] = useState("all");
+   const navigate = useNavigate();
+   const location = useLocation();
+   const query = new URLSearchParams(location.search);
+   const initialPage = parseInt(query.get("page")) || 1;
+   const initialSearch = query.get("searchValue") || "";
+   const initialFilter = query.get("filterBy") || "all";
+   const [currentPage, setCurrentPage] = useState(initialPage);
+   const [searchValue, setSearchValue] = useState(initialSearch);
+   const [filterBy, setFilterBy] = useState(initialFilter);
 
-   // TODO: Implement pagination
    const { data: allSessionsData = {}, isLoading } = useFetchForGet(
       "public",
       ["sessions", currentPage, searchValue, filterBy],
       `/get-all-sessions?page=${currentPage}&searchValue=${searchValue}&filterBy=${filterBy}`,
       { keepPreviousData: true }
    );
-   const { totalDataFound, sessions = [], totalPages = 1 } = allSessionsData;
+   const { sessions = [], totalPages = 1 } = allSessionsData;
 
-   // setTotalPages(totalPages);
-
+   const handlePageChange = (newPage) => {
+      setCurrentPage(newPage);
+      navigate(
+         `?page=${newPage}&searchValue=${searchValue}&filterBy=${filterBy}`
+      );
+   };
    const handleSearch = (e) => {
       setSearchValue(e.target.value);
       setCurrentPage(1);
@@ -39,6 +48,13 @@ const AllStudySessions = () => {
       setFilterBy(value);
       setCurrentPage(1);
    };
+
+   useEffect(() => {
+      const updatedQuery = new URLSearchParams(location.search);
+      setCurrentPage(parseInt(updatedQuery.get("page")) || 1);
+      setSearchValue(updatedQuery.get("searchValue") || "");
+      setFilterBy(updatedQuery.get("filterBy") || "all");
+   }, [location.search]);
 
    const CardSkeleton = () => (
       <>
@@ -121,7 +137,7 @@ const AllStudySessions = () => {
             <Pagination
                currentPage={currentPage}
                totalPages={totalPages}
-               onPageChange={setCurrentPage}
+               onPageChange={handlePageChange}
                className='mt-8'
                showFirstLast={true}
                showPageNumbers={true}

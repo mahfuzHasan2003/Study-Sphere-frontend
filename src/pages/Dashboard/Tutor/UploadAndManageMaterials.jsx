@@ -48,6 +48,7 @@ import { toast } from "@/hooks/use-toast";
 import { groupMaterialsBySessionId } from "@/utilities/groupMaterialsBySessionId";
 import { useNavigate } from "react-router-dom";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
+import DataLoader from "@/shared/DataLoader";
 
 function Modal({ isOpen, onClose, title, children }) {
    return (
@@ -71,6 +72,7 @@ export default function UploadAndManageMaterials() {
    const [selectedMaterilId, setSelectedMaterilId] = useState(null);
    const [groupedMaterials, setGroupedMaterials] = useState([]);
    const navigate = useNavigate();
+   const [materialUploadLoading, setMaterilUploadLoading] = useState(false);
 
    // getting approved sessions
    const { data: approvedSessions = [] } = useFetchForGet(
@@ -80,7 +82,6 @@ export default function UploadAndManageMaterials() {
       { enabled: !!user?.email }
    );
    // getting material of selected tutor
-   // TODO:  add sketeton
    const { data: tutorMaterials = [], refetch: refetchMaterials } =
       useFetchForGet(
          "secure",
@@ -119,10 +120,10 @@ export default function UploadAndManageMaterials() {
 
    // adding new material
    const onSubmit = async (data) => {
+      setMaterilUploadLoading(true);
       const materialCoverImage = await uploadToImageBB(
          data?.materialCoverImage[0]
       );
-      //    TODO: post with tanstack query
       const { data: result } = await axiosSecure.post(
          "/upload-a-new-material",
          {
@@ -146,6 +147,7 @@ export default function UploadAndManageMaterials() {
             description: `Error: ${result.message}`,
          });
       }
+      setMaterilUploadLoading(false);
    };
 
    // delete a material
@@ -296,14 +298,21 @@ export default function UploadAndManageMaterials() {
                               )}
                            </div>
                            <div className='text-end'>
-                              <Button type='submit'>Upload</Button>
+                              <Button
+                                 type='submit'
+                                 disabled={materialUploadLoading}>
+                                 {materialUploadLoading ? (
+                                    <DataLoader text='Uploading..' />
+                                 ) : (
+                                    "Upload"
+                                 )}
+                              </Button>
                            </div>
                         </form>
                      </DialogDescription>
                   </DialogContent>
                </Dialog>
 
-               {/* TODO: handle loading state */}
                {/* Dynamic material cards */}
                {groupedMaterials?.map((matWithDetails) => (
                   <Card key={matWithDetails?.sessionId}>

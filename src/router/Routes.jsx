@@ -141,7 +141,7 @@ const routes = createBrowserRouter([
             path: "users/all",
             element: (
                <AdminRoute>
-                  <AllUsers />,
+                  <AllUsers />
                </AdminRoute>
             ),
          },

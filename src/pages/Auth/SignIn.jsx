@@ -111,7 +111,7 @@ const SignIn = () => {
                <Button
                   className='block'
                   disabled={!captchaValue || authLoading}>
-                  {authLoading ? <DataLoader /> : "Sign In"}
+                  {authLoading ? <DataLoader text='processing..' /> : "Sign In"}
                </Button>
             </form>
             <SocialLogin state={{ ...state }} />

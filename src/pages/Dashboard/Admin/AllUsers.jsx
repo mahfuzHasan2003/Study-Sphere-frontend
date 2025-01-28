@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,8 +31,13 @@ import {
 import useAuth from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
+import Pagination from "@/shared/Pagination";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AllUsers = () => {
+   const navigate = useNavigate();
+   const location = useLocation();
+   const [currentPage, setCurrentPage] = useState(1);
    const [searchQuery, setSearchQuery] = useState("");
    const [roleFilter, setRoleFilter] = useState("all");
    const { toast } = useToast();
@@ -71,15 +76,28 @@ const AllUsers = () => {
 
    const {
       isLoading,
-      data: users = [],
+      data: allUsersData = {},
       refetch,
    } = useFetchForGet(
       "secure",
-      ["allUsers", searchQuery, roleFilter],
-      `/get-all-users/${loggedInAdmin?.email}?searchQuery=${searchQuery}&roleFilter=${roleFilter}`,
+      ["allUsers", searchQuery, roleFilter, currentPage],
+      `/get-all-users/${loggedInAdmin?.email}?page=${currentPage}&limit=10&searchQuery=${searchQuery}&roleFilter=${roleFilter}`,
       { enabled: !!loggedInAdmin?.email }
    );
 
+   const { totalUsers = 0, users = [], totalPages = 1 } = allUsersData;
+   const handlePageChange = (newPage) => {
+      setCurrentPage(newPage);
+      navigate(
+         `?page=${newPage}&searchQuery=${searchQuery}&roleFilter=${roleFilter}`
+      );
+   };
+   useEffect(() => {
+      const updatedQuery = new URLSearchParams(location.search);
+      setCurrentPage(parseInt(updatedQuery.get("page")) || 1);
+      setSearchQuery(updatedQuery.get("searchQuery") || "");
+      setRoleFilter(updatedQuery.get("roleFilter") || "all");
+   }, [location.search]);
    const handleConfirm = async (user) => {
       if (currentAction === "makeAdmin") {
          // handleUpdateRole(user._id);
@@ -113,11 +131,19 @@ const AllUsers = () => {
                <Input
                   placeholder='Search by name or email...'
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                     setSearchQuery(e.target.value);
+                     setCurrentPage(1);
+                  }}
                   className='max-w-md'
                />
             </div>
-            <Select value={roleFilter} onValueChange={setRoleFilter}>
+            <Select
+               value={roleFilter}
+               onValueChange={(value) => {
+                  setRoleFilter(value);
+                  setCurrentPage(1);
+               }}>
                <SelectTrigger className='w-[180px]'>
                   <SelectValue placeholder='Filter by role' />
                </SelectTrigger>
@@ -129,7 +155,6 @@ const AllUsers = () => {
                </SelectContent>
             </Select>
          </div>
-
          <div className='rounded-md border'>
             <Table>
                <TableHeader>
@@ -148,7 +173,9 @@ const AllUsers = () => {
                   ) : (
                      users.map((user, index) => (
                         <TableRow key={user._id}>
-                           <TableCell>{index + 1}</TableCell>
+                           <TableCell>
+                              {(currentPage - 1) * 10 + index + 1}
+                           </TableCell>
                            <TableCell>
                               <UserAvatar
                                  userName={user.userName}
@@ -247,12 +274,22 @@ const AllUsers = () => {
                         </TableRow>
                      ))
                   )}
-               </TableBody>
-            </Table>
+               </TableBody>{" "}
+            </Table>{" "}
             {users.length < 1 && !isLoading ? (
                <p className='text-center text-red-500 py-5'>No data found.</p>
             ) : null}
          </div>
+         {totalPages > 1 && (
+            <Pagination
+               currentPage={currentPage}
+               totalPages={totalPages}
+               onPageChange={handlePageChange}
+               className='mt-8'
+               showFirstLast={true}
+               showPageNumbers={true}
+            />
+         )}
       </div>
    );
 };

@@ -19,7 +19,6 @@ const BookedSessions = () => {
       `/student-booked-sessions/${user?.email}`,
       { enabled: !!user?.email }
    );
-   //  TODO:  Add Loading
    return (
       <div>
          <h2 className='text-xl md:text-2xl lg:text-3xl font-bold mb-8 border-l-8 border-primary pl-3'>
