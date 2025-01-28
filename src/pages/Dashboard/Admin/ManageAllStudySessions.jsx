@@ -26,15 +26,6 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-   Pagination,
-   PaginationContent,
-   PaginationEllipsis,
-   PaginationItem,
-   PaginationLink,
-   PaginationNext,
-   PaginationPrevious,
-} from "@/components/ui/pagination";
 import { useToast } from "@/hooks/use-toast";
 import { useFetchForGet } from "@/hooks/useFetchForGet";
 import { FaCheck, FaTimes, FaEdit, FaTrash, FaEye } from "react-icons/fa";
@@ -43,10 +34,11 @@ import { convertToHoursAndMinutes } from "@/utilities/convertToHoursAndMinutes";
 import { format } from "date-fns";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import { Helmet } from "react-helmet";
+import Pagination from "@/shared/Pagination";
 
 const ManageAllStudySessions = () => {
-   const [currentPage, setCurrentPage] = useState(1);
-   const [totalPages, setTotalPages] = useState(1);
+   // const [currentPage, setCurrentPage] = useState(1);
+   // const [totalPages, setTotalPages] = useState(1);
    const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
    const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
    const [isShowDetailsModalOpen, setIsShowDetailsModalOpen] = useState(false);
@@ -75,8 +67,6 @@ const ManageAllStudySessions = () => {
       refetch: refetchApprovedData,
       data: approvedSessions = [],
    } = useFetchForGet("secure", ["approvedSessions"], "/approved-sessions");
-
-   // `/api/approved-sessions?page=${currentPage}&limit=10`;
 
    const TableSkeleton = () => (
       <>
@@ -279,43 +269,6 @@ const ManageAllStudySessions = () => {
       // setTotalPages(approvedData.totalPages);
    }, [approvedSessions]);
 
-   const renderPagination = () => {
-      const pages = [];
-      for (let i = 1; i <= totalPages; i++) {
-         pages.push(
-            <PaginationItem key={i}>
-               <PaginationLink
-                  onClick={() => setCurrentPage(i)}
-                  isActive={currentPage === i}>
-                  {i}
-               </PaginationLink>
-            </PaginationItem>
-         );
-      }
-
-      return (
-         <Pagination>
-            <PaginationContent>
-               <PaginationItem>
-                  <PaginationPrevious
-                     onClick={() =>
-                        setCurrentPage((prev) => Math.max(1, prev - 1))
-                     }
-                  />
-               </PaginationItem>
-               {pages}
-               <PaginationItem>
-                  <PaginationNext
-                     onClick={() =>
-                        setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-                     }
-                  />
-               </PaginationItem>
-            </PaginationContent>
-         </Pagination>
-      );
-   };
-
    return (
       <div>
          <Helmet>
@@ -326,15 +279,15 @@ const ManageAllStudySessions = () => {
          </h2>
          <Tabs defaultValue='pending'>
             <TabsList>
-               <TabsTrigger value='pending'>Pending Sessions</TabsTrigger>
-               <TabsTrigger value='approved'>Approved Sessions</TabsTrigger>
+               <TabsTrigger value='pending'>⌚ Pending Sessions</TabsTrigger>
+               <TabsTrigger value='approved'>✅ Approved Sessions</TabsTrigger>
             </TabsList>
             <TabsContent value='pending'>
                {renderSessionTable(pendingSessions, true)}
             </TabsContent>
             <TabsContent value='approved'>
                {renderSessionTable(approvedSessions, false)}
-               {renderPagination()}
+               {/* {approvedSessions.length > 10 ? <Pagination /> : null} */}
             </TabsContent>
          </Tabs>
 

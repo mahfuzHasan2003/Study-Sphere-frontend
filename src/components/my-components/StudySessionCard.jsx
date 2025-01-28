@@ -29,7 +29,7 @@ const StudySessionCard = ({ session }) => {
    const isUpcoming = isAfter(startDate, currentDate);
 
    return (
-      <Card className='overflow-hidden flex flex-col'>
+      <Card className='overflow-hidden flex flex-col group'>
          <div className='relative'>
             <img
                src={
@@ -37,7 +37,7 @@ const StudySessionCard = ({ session }) => {
                   "https://miro.medium.com/v2/resize:fit:2000/1*vR3W5nmBzFdVy2BCx6apPg.png"
                }
                alt={session.sessionTitle}
-               className='w-full h-48 object-cover'
+               className='w-full h-48 object-cover group-hover:scale-105 transition-transform'
             />
             {!isUpcoming ? (
                <Badge
