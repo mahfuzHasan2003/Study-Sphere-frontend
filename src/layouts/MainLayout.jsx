@@ -6,23 +6,23 @@ import { Helmet } from "react-helmet";
 import { Outlet, useLocation } from "react-router-dom";
 
 const MainLayout = () => {
-   const { pathname } = useLocation();
-   useEffect(() => {
-      window.scrollTo(0, 0);
-   }, [pathname]);
-   return (
-      <div className='min-h-svh overflow-y-auto flex flex-col'>
-         <Helmet>
-            <title> Study Sphere | Home</title>
-         </Helmet>
-         <Toaster />
-         <NavBar />
-         <div className='flex-grow'>
-            <Outlet />
-         </div>
-         <Footer />
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return (
+    <div className="min-h-svh flex flex-col">
+      <Helmet>
+        <title> Study Sphere | Home</title>
+      </Helmet>
+      <Toaster />
+      <NavBar />
+      <div className="flex-grow mt-16 lg:mt-20">
+        <Outlet />
       </div>
-   );
+      <Footer />
+    </div>
+  );
 };
 
 export default MainLayout;

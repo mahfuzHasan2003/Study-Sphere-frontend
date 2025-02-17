@@ -23,150 +23,160 @@ import Payment from "@/pages/payment/Payment";
 import PrivateRoute from "@/private/PrivateRoute";
 import DashboardWelcome from "@/pages/Dashboard/DashboardWelcome";
 import ErrorPage from "@/pages/Error/ErrorPage";
+import UserProfile from "@/pages/Dashboard/UserProfile";
 
 const routes = createBrowserRouter([
-   {
-      path: "/",
-      element: <MainLayout />,
-      children: [
-         {
-            path: "/",
-            element: <Home />,
-         },
-         {
-            path: "all-sessions",
-            element: <AllStudySessions />,
-         },
-         {
-            path: "session-details/:id",
-            element: <SessionDetails />,
-         },
-         {
-            path: "all-sessions",
-            element: <AllStudySessions />,
-         },
-         {
-            path: "auth/signin",
-            element: <SignIn />,
-         },
-         {
-            path: "auth/signup",
-            element: <SignUp />,
-         },
-      ],
-   },
-   {
-      path: "dashboard",
-      element: <DashboardLayout />,
-      children: [
-         // dashboard welcome page
-         {
-            index: true,
-            element: (
-               <PrivateRoute>
-                  <DashboardWelcome />
-               </PrivateRoute>
-            ),
-         },
-         // ------------- student routes ----------
-         {
-            path: "booked-sessions",
-            element: (
-               <StudentRoute>
-                  <BookedSessions />
-               </StudentRoute>
-            ),
-         },
-         {
-            path: "make-payment/:id",
-            element: (
-               <StudentRoute>
-                  <Payment />
-               </StudentRoute>
-            ),
-         },
-         {
-            path: "notes/manage",
-            element: (
-               <StudentRoute>
-                  <CreateOrManageNotes />
-               </StudentRoute>
-            ),
-         },
-         {
-            path: "materials",
-            element: (
-               <StudentRoute>
-                  <StudyMaterials />
-               </StudentRoute>
-            ),
-         },
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "all-sessions",
+        element: <AllStudySessions />,
+      },
+      {
+        path: "session-details/:id",
+        element: <SessionDetails />,
+      },
+      {
+        path: "all-sessions",
+        element: <AllStudySessions />,
+      },
+      {
+        path: "auth/signin",
+        element: <SignIn />,
+      },
+      {
+        path: "auth/signup",
+        element: <SignUp />,
+      },
+    ],
+  },
+  {
+    path: "dashboard",
+    element: <DashboardLayout />,
+    children: [
+      // dashboard welcome page
+      {
+        index: true,
+        element: (
+          <PrivateRoute>
+            <DashboardWelcome />
+          </PrivateRoute>
+        ),
+      },
+      // user Profile page
+      {
+        path: "user-profile/:email",
+        element: (
+          <PrivateRoute>
+            <UserProfile />
+          </PrivateRoute>
+        ),
+      },
+      // ------------- student routes ----------
+      {
+        path: "booked-sessions",
+        element: (
+          <StudentRoute>
+            <BookedSessions />
+          </StudentRoute>
+        ),
+      },
+      {
+        path: "make-payment/:id",
+        element: (
+          <StudentRoute>
+            <Payment />
+          </StudentRoute>
+        ),
+      },
+      {
+        path: "notes/manage",
+        element: (
+          <StudentRoute>
+            <CreateOrManageNotes />
+          </StudentRoute>
+        ),
+      },
+      {
+        path: "materials",
+        element: (
+          <StudentRoute>
+            <StudyMaterials />
+          </StudentRoute>
+        ),
+      },
 
-         // ----------- tutor routes -----------
-         {
-            path: "tutor-sessions",
-            element: (
-               <TutorRoute>
-                  <TutorSessions />
-               </TutorRoute>
-            ),
-         },
-         {
-            path: "create-session",
-            element: (
-               <TutorRoute>
-                  <CreateStudySession />
-               </TutorRoute>
-            ),
-         },
-         {
-            path: "upload-and-manage-materials",
-            element: (
-               <TutorRoute>
-                  <UploadAndManageMaterials />
-               </TutorRoute>
-            ),
-         },
-         {
-            path: "update-material/:id",
-            element: (
-               <TutorRoute>
-                  <UpdateMaterial />
-               </TutorRoute>
-            ),
-         },
+      // ----------- tutor routes -----------
+      {
+        path: "tutor-sessions",
+        element: (
+          <TutorRoute>
+            <TutorSessions />
+          </TutorRoute>
+        ),
+      },
+      {
+        path: "create-session",
+        element: (
+          <TutorRoute>
+            <CreateStudySession />
+          </TutorRoute>
+        ),
+      },
+      {
+        path: "upload-and-manage-materials",
+        element: (
+          <TutorRoute>
+            <UploadAndManageMaterials />
+          </TutorRoute>
+        ),
+      },
+      {
+        path: "update-material/:id",
+        element: (
+          <TutorRoute>
+            <UpdateMaterial />
+          </TutorRoute>
+        ),
+      },
 
-         // ------------ admin routes ------------
-         {
-            path: "users/all",
-            element: (
-               <AdminRoute>
-                  <AllUsers />
-               </AdminRoute>
-            ),
-         },
-         {
-            path: "all-study-sessions/manage",
-            element: (
-               <AdminRoute>
-                  <ManageAllStudySessions />
-               </AdminRoute>
-            ),
-         },
-         {
-            path: "materials/all/manage",
-            element: (
-               <AdminRoute>
-                  <ManageAllMaterials />
-               </AdminRoute>
-            ),
-         },
-      ],
-   },
-   {
-      path: "*",
-      element: <ErrorPage />,
-   },
+      // ------------ admin routes ------------
+      {
+        path: "users/all",
+        element: (
+          <AdminRoute>
+            <AllUsers />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "all-study-sessions/manage",
+        element: (
+          <AdminRoute>
+            <ManageAllStudySessions />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "materials/all/manage",
+        element: (
+          <AdminRoute>
+            <ManageAllMaterials />
+          </AdminRoute>
+        ),
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <ErrorPage />,
+  },
 ]);
 
 export default routes;
