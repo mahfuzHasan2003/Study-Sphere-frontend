@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import {
   Card,
@@ -57,7 +55,7 @@ export default function UserProfile() {
           throw new Error("Failed to update profile");
         }
       } else {
-        throw new Error("Bad Request: Missing required fields.");
+        throw new Error("Missing required fields.");
       }
     } catch (error) {
       toast({
