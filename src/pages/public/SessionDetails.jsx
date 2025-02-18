@@ -356,7 +356,11 @@ const SessionDetails = () => {
                 className="w-16 h-16 rounded-full mr-4 aspect-square object-cover object-center"
               />
               <div>
-                <h2 className="text-xl font-semibold">{session.tutorName}</h2>
+                <h2 className="text-xl font-semibold opacity-80 hover:opacity-100">
+                  <Link to={`/tutor/${session?.tutorEmail}/sessions`}>
+                    {session.tutorName}
+                  </Link>
+                </h2>
                 <p className="text-sm text-muted-foreground">
                   {tutorAvailableSessionsCount?.count || 0} course(s) available
                 </p>
@@ -374,7 +378,7 @@ const SessionDetails = () => {
             <CardHeader>
               <CardTitle>Add Your Review</CardTitle>
               <CardDescription>
-                How was the session? Let's share your opinion!!
+                How was the session? Let&apos;s share your opinion!!
               </CardDescription>
             </CardHeader>
             <CardContent>
