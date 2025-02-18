@@ -11,7 +11,7 @@ const NavBar = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="py-3 px-5 fixed top-0 z-10 backdrop-blur-lg w-full bg-background/40">
+    <div className="py-3 px-4 xl:px-0 sticky top-0 z-10 backdrop-blur-lg w-full bg-background/40">
       <div className="flex items-center justify-between max-w-8xl mx-auto">
         <Link to="/">
           <h4 className="text-xl md:text-2xl font-semibold">StudySphere</h4>

@@ -17,7 +17,7 @@ const MainLayout = () => {
       </Helmet>
       <Toaster />
       <NavBar />
-      <div className="flex-grow mt-16 lg:mt-20">
+      <div className="flex-grow">
         <Outlet />
       </div>
       <Footer />

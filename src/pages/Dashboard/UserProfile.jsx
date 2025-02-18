@@ -7,10 +7,15 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Mail, Lock, User } from "lucide-react";
+import { Mail, Lock, User, LogOut } from "lucide-react";
 import GetUserWithRole from "@/shared/GetUserWithRole";
+import { toast } from "@/hooks/use-toast";
+import useAuth from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export default function UserProfile() {
+  const navigate = useNavigate();
+  const { signOutUser } = useAuth();
   const {
     userRole = "",
     userName = "Anonymous",
@@ -19,7 +24,7 @@ export default function UserProfile() {
   } = GetUserWithRole();
 
   return (
-    <div className="container max-w-4xl mt-10 px-4">
+    <div className="max-w-4xl">
       <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4 border-l-8 border-primary pl-3">
         User Profile
       </h2>
@@ -29,7 +34,7 @@ export default function UserProfile() {
       </p>
 
       {/* Cover Photo */}
-      <div className="relative w-full h-48 sm:h-64 bg-gray-200 rounded-lg overflow-hidden mb-16">
+      <div className="relative w-full h-36 md:h-40 lg:h-48 bg-gray-200 rounded-lg overflow-hidden mb-16">
         <img
           src="https://i.pinimg.com/736x/23/7e/84/237e84a2bdffdff84e08bf3ecd1ebf25.jpg"
           alt="Cover"
@@ -38,7 +43,7 @@ export default function UserProfile() {
       </div>
 
       {/* Profile Card */}
-      <Card className="relative -mt-24 mx-auto p-6 w-full shadow-lg">
+      <Card className="relative -mt-24 mx-auto w-full shadow-lg">
         <CardHeader className="pb-0">
           <div className="flex flex-col sm:flex-row items-center gap-4">
             {/* Profile Photo & Active Status */}
@@ -67,13 +72,35 @@ export default function UserProfile() {
           </div>
         </CardHeader>
 
-        <CardContent className="mt-6">
+        <CardContent className="mt-6 flex gap-3">
           {/* TODO: add Reset pass functionality  */}
           <Button
             variant="outline"
             className="w-full sm:w-auto flex items-center gap-2"
           >
             <Lock className="w-4 h-4" /> Reset Password
+          </Button>
+          <Button
+            variant="destructive"
+            className="w-full sm:w-auto flex items-center gap-2"
+            onClick={() => {
+              signOutUser()
+                .then(() => {
+                  toast({
+                    variant: "success",
+                    description: `Logout Success!`,
+                  });
+                  navigate("/");
+                })
+                .catch((err) =>
+                  toast({
+                    variant: "error",
+                    description: `Logout Failed : ${err.message}`,
+                  })
+                );
+            }}
+          >
+            <LogOut className="w-4 h-4" /> Logout
           </Button>
         </CardContent>
       </Card>
