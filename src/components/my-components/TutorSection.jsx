@@ -3,6 +3,7 @@ import TutorCard from "./TutorCard";
 import Marquee from "react-fast-marquee";
 import { useEffect, useState } from "react";
 import Color from "color";
+import { Link } from "react-router-dom";
 
 const TutorSection = () => {
   const [themeBG, setThemeBG] = useState("255, 255, 255");
@@ -19,6 +20,7 @@ const TutorSection = () => {
     ["topTutors"],
     "/top-tutors"
   );
+
   return (
     <section className="py-5 max-w-8xl mx-auto mt-5 px-5 xl:px-0">
       <h2 className="text-3xl font-bold text-center">Meet Our Expert Tutors</h2>
@@ -28,9 +30,16 @@ const TutorSection = () => {
         from the best in the field!
       </p>
       <div className="mt-5">
-        <Marquee gradient={true} gradientColor={themeBG} pauseOnHover={true}>
+        <Marquee
+          gradient={true}
+          gradientColor={themeBG}
+          pauseOnHover={true}
+          speed={20}
+        >
           {tutors.map((tutor) => (
-            <TutorCard key={tutor?._id} tutor={tutor} className="mx-2" />
+            <Link to={`tutor/${tutor?.userEmail}/sessions`} key={tutor?._id}>
+              <TutorCard tutor={tutor} className="mx-2" />
+            </Link>
           ))}
         </Marquee>
       </div>

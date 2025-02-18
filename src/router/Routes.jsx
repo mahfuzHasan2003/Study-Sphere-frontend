@@ -24,6 +24,7 @@ import PrivateRoute from "@/private/PrivateRoute";
 import DashboardWelcome from "@/pages/Dashboard/DashboardWelcome";
 import ErrorPage from "@/pages/Error/ErrorPage";
 import UserProfile from "@/pages/Dashboard/UserProfile";
+import TutorProfile from "@/components/my-components/TutorProfile";
 
 const routes = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const routes = createBrowserRouter([
       {
         path: "all-sessions",
         element: <AllStudySessions />,
+      },
+      {
+        path: "tutor/:email/sessions",
+        element: <TutorProfile />,
       },
       {
         path: "auth/signin",
