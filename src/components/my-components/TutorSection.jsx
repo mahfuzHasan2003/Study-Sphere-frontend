@@ -1,7 +1,19 @@
 import { useFetchForGet } from "@/hooks/useFetchForGet";
 import TutorCard from "./TutorCard";
+import Marquee from "react-fast-marquee";
+import { useEffect, useState } from "react";
+import Color from "color";
 
 const TutorSection = () => {
+  const [themeBG, setThemeBG] = useState("255, 255, 255");
+  useEffect(() => {
+    const rootStyles = getComputedStyle(document.documentElement);
+    const primaryBGColorHSL = rootStyles
+      .getPropertyValue("--background")
+      .trim();
+    const primaryBGColorRGB = Color(`hsl(${primaryBGColorHSL})`).rgb().string();
+    setThemeBG(primaryBGColorRGB);
+  }, []);
   const { data: tutors = [] } = useFetchForGet(
     "public",
     ["topTutors"],
@@ -15,10 +27,12 @@ const TutorSection = () => {
         achieve your goals. Learn, grow, and succeed with personalized guidance
         from the best in the field!
       </p>
-      <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {tutors.map((tutor) => (
-          <TutorCard key={tutor?._id} tutor={tutor} />
-        ))}
+      <div className="mt-5">
+        <Marquee gradient={true} gradientColor={themeBG} pauseOnHover={true}>
+          {tutors.map((tutor) => (
+            <TutorCard key={tutor?._id} tutor={tutor} className="mx-2" />
+          ))}
+        </Marquee>
       </div>
     </section>
   );
