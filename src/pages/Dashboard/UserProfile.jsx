@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -7,13 +10,16 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Mail, Lock, User, LogOut } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Mail, SaveAll, User, LogOut, Phone, MapPin } from "lucide-react";
 import GetUserWithRole from "@/shared/GetUserWithRole";
 import { toast } from "@/hooks/use-toast";
 import useAuth from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 export default function UserProfile() {
+  const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
   const { signOutUser } = useAuth();
   const {
@@ -21,14 +27,51 @@ export default function UserProfile() {
     userName = "Anonymous",
     userPhotoURL = "",
     userEmail = "",
+    location = "",
+    phoneNumber = "",
   } = GetUserWithRole();
+
+  const [tempPhoneNumber, setTempPhoneNumber] = useState("");
+  const [tempLocation, setTempLocation] = useState("");
+  const [isEditing, setIsEditing] = useState({
+    phone: false,
+    location: false,
+  });
+
+  const handleSaveChanges = async () => {
+    try {
+      const updateFields = {};
+      if (tempLocation) updateFields.location = tempLocation;
+      if (tempPhoneNumber) updateFields.phoneNumber = tempPhoneNumber;
+      if (tempPhoneNumber || tempLocation) {
+        const { data } = await axiosSecure.patch(
+          `/update-profile/${userEmail}`,
+          updateFields
+        );
+        if (data.success) {
+          toast({
+            variant: "success",
+            description: "Profile updated successfully!",
+          });
+        } else {
+          throw new Error("Failed to update profile");
+        }
+      } else {
+        throw new Error("Bad Request: Missing required fields.");
+      }
+    } catch (error) {
+      toast({
+        variant: "error",
+        description: `Error: ${error?.message}`,
+      });
+    }
+  };
 
   return (
     <div className="max-w-4xl">
       <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4 border-l-8 border-primary pl-3">
         User Profile
       </h2>
-      {/* <h1 className="text-3xl font-bold mb-4"></h1> */}
       <p className="text-muted-foreground mb-8">
         Manage your account details and preferences
       </p>
@@ -72,36 +115,113 @@ export default function UserProfile() {
           </div>
         </CardHeader>
 
-        <CardContent className="mt-6 flex gap-3">
-          {/* TODO: add Reset pass functionality  */}
-          <Button
-            variant="outline"
-            className="w-full sm:w-auto flex items-center gap-2"
-          >
-            <Lock className="w-4 h-4" /> Reset Password
-          </Button>
-          <Button
-            variant="destructive"
-            className="w-full sm:w-auto flex items-center gap-2"
-            onClick={() => {
-              signOutUser()
-                .then(() => {
-                  toast({
-                    variant: "success",
-                    description: `Logout Success!`,
-                  });
-                  navigate("/");
-                })
-                .catch((err) =>
-                  toast({
-                    variant: "error",
-                    description: `Logout Failed : ${err.message}`,
+        <CardContent className="mt-6">
+          <div className="space-y-4">
+            {/* Phone Number */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4" />
+                {isEditing.phone ? (
+                  <Input
+                    value={tempPhoneNumber || phoneNumber}
+                    type="number"
+                    onBlur={() =>
+                      setIsEditing((prev) => ({ ...prev, phone: !prev.phone }))
+                    }
+                    autoFocus={isEditing.phone}
+                    onChange={(e) => setTempPhoneNumber(e.target.value)}
+                    placeholder="Enter phone number"
+                    className="max-w-[200px] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                ) : (
+                  <span>
+                    {tempPhoneNumber || phoneNumber || "Add phone number"}
+                  </span>
+                )}
+              </div>
+              {!isEditing.phone && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() =>
+                    setIsEditing((prev) => ({ ...prev, phone: !prev.phone }))
+                  }
+                >
+                  Edit
+                </Button>
+              )}
+            </div>
+
+            {/* Location */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4" />
+                {isEditing.location ? (
+                  <Input
+                    value={tempLocation || location}
+                    onBlur={() =>
+                      setIsEditing((prev) => ({
+                        ...prev,
+                        location: !prev.location,
+                      }))
+                    }
+                    autoFocus={isEditing.location}
+                    onChange={(e) => setTempLocation(e.target.value)}
+                    placeholder="Enter location"
+                    className="max-w-[200px]"
+                  />
+                ) : (
+                  <span>{tempLocation || location || "Add location"}</span>
+                )}
+              </div>
+              {!isEditing.location && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() =>
+                    setIsEditing((prev) => ({
+                      ...prev,
+                      location: !prev.location,
+                    }))
+                  }
+                >
+                  Edit
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-6 flex gap-3">
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto flex items-center gap-2"
+              onClick={handleSaveChanges}
+            >
+              <SaveAll className="w-4 h-4" /> Save Changes
+            </Button>
+            <Button
+              variant="destructive"
+              className="w-full sm:w-auto flex items-center gap-2"
+              onClick={() => {
+                signOutUser()
+                  .then(() => {
+                    toast({
+                      variant: "success",
+                      description: `Logout Success!`,
+                    });
+                    navigate("/");
                   })
-                );
-            }}
-          >
-            <LogOut className="w-4 h-4" /> Logout
-          </Button>
+                  .catch((err) =>
+                    toast({
+                      variant: "error",
+                      description: `Logout Failed : ${err.message}`,
+                    })
+                  );
+              }}
+            >
+              <LogOut className="w-4 h-4" /> Logout
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
