@@ -24,7 +24,7 @@ import PrivateRoute from "@/private/PrivateRoute";
 import DashboardWelcome from "@/pages/Dashboard/DashboardWelcome";
 import ErrorPage from "@/pages/Error/ErrorPage";
 import UserProfile from "@/pages/Dashboard/UserProfile";
-import TutorProfile from "@/components/my-components/TutorProfile";
+import TutorProfile from "@/pages/public/TutorProfile";
 
 const routes = createBrowserRouter([
   {

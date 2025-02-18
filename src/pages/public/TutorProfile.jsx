@@ -1,10 +1,10 @@
 import { useFetchForGet } from "@/hooks/useFetchForGet";
 import { useParams } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
-import StudySessionCard from "./StudySessionCard";
+import StudySessionCard from "@/components/my-components/StudySessionCard";
 
 const TutorProfile = () => {
   const { email } = useParams();
@@ -23,8 +23,8 @@ const TutorProfile = () => {
     <div className="py-5 max-w-8xl mx-auto mt-5 px-5 xl:px-0">
       <Card className="mb-8">
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
+          <div className="md:flex justify-between items-center">
+            <div className="flex items-center gap-4 mb-4 md:mb-0">
               <Avatar className="w-24 h-24 border-primary border-2">
                 <AvatarImage
                   src={
