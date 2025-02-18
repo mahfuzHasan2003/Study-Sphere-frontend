@@ -11,7 +11,7 @@ const FeaturedSessions = () => {
   );
 
   return (
-    <section className="py-12 max-w-8xl mx-auto mt-5 px-5 xl:px-0">
+    <section className="py-12 max-w-8xl mx-auto px-5 xl:px-0">
       <h2 className="text-3xl font-bold text-center">🔥Featured Sessions</h2>
       <p className="text-muted-foreground text-center mt-2">
         Discover latest study sessions curated for the best learning experience.
