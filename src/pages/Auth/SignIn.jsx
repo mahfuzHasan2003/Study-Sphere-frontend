@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Copy, Eye, EyeOff } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import SocialLogin from "@/shared/SocialLogin";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -12,6 +12,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
 import DataLoader from "@/shared/DataLoader";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,8 +25,7 @@ const SignIn = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { state } = useLocation();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [isAdminPopoverOpen, setIsAdminPopoverOpen] = useState(false);
   const {
     register,
     handleSubmit,
@@ -48,27 +52,50 @@ const SignIn = () => {
       });
   };
 
-  const handleAdminSignin = () => {
-    setEmail("admin1@studysphere.com");
-    setPassword("AAbb11");
-    toast({
-      description:
-        "Please validate the captcha and then click on the sign in button 3 times if you got stack",
-    });
-  };
   return (
     <div className="max-w-8xl mx-auto flex items-center justify-between *:flex-1 mt-10">
       <div className="max-w-xl mx-auto border p-5 rounded-md">
         <h2 className="text-3xl font-bold mb-5">Sign In </h2>
-        <p className="text-center">
-          <span
-            className="text-red-500 font-bold cursor-pointer"
-            onClick={handleAdminSignin}
-          >
-            👉 Sign in as <span className="text-blue-500 underline">ADMIN</span>{" "}
-            👈
-          </span>
-        </p>
+        <Popover open={isAdminPopoverOpen} onOpenChange={setIsAdminPopoverOpen}>
+          <PopoverTrigger asChild>
+            <p className="text-center">
+              <span className="text-red-500 font-bold cursor-pointer">
+                👉 Sign in as{" "}
+                <span className="text-blue-500 underline">ADMIN</span> 👈
+              </span>
+            </p>
+          </PopoverTrigger>
+          <PopoverContent side="top">
+            <p className="text-center text-red-500">Click to copy</p>
+            <p
+              className="cursor-copy"
+              onClick={() => {
+                window.navigator.clipboard.writeText("admin1@studysphere.com");
+                toast({
+                  variant: "success",
+                  description: "email copied to clipboard",
+                });
+                setIsAdminPopoverOpen(false);
+              }}
+            >
+              email: admin1@studysphere.com
+            </p>
+            <p
+              className="cursor-copy"
+              onClick={() => {
+                window.navigator.clipboard.writeText("AAbb11");
+                toast({
+                  variant: "success",
+                  description: "password copied to clipboard",
+                });
+                setIsAdminPopoverOpen(false);
+              }}
+            >
+              password: AAbb11
+            </p>
+          </PopoverContent>
+        </Popover>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
           {/* Email */}
           <div>
@@ -77,8 +104,6 @@ const SignIn = () => {
             </Label>
             <Input
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               placeholder="mahfuz@domain.com"
               {...register("email", {
                 required: "please enter your email",
@@ -98,8 +123,6 @@ const SignIn = () => {
             <div className="relative">
               <Input
                 type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 placeholder="type your password here"
                 className="pr-10"
                 {...register("password", {
