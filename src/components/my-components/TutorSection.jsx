@@ -1,20 +1,11 @@
 import { useFetchForGet } from "@/hooks/useFetchForGet";
 import TutorCard from "./TutorCard";
 import Marquee from "react-fast-marquee";
-import { useEffect, useState } from "react";
-import Color from "color";
 import { Link } from "react-router-dom";
+import { useTheme } from "../theme-provider";
 
 const TutorSection = () => {
-  const [themeBG, setThemeBG] = useState("255, 255, 255");
-  useEffect(() => {
-    const rootStyles = getComputedStyle(document.documentElement);
-    const primaryBGColorHSL = rootStyles
-      .getPropertyValue("--background")
-      .trim();
-    const primaryBGColorRGB = Color(`hsl(${primaryBGColorHSL})`).rgb().string();
-    setThemeBG(primaryBGColorRGB);
-  }, []);
+  const { theme } = useTheme();
   const { data: tutors = [] } = useFetchForGet(
     "public",
     ["topTutors"],
@@ -34,7 +25,9 @@ const TutorSection = () => {
       <div className="mt-5">
         <Marquee
           gradient={true}
-          gradientColor={themeBG}
+          gradientColor={
+            theme === "light" ? "rgb(255,255,255)" : "rgb(3, 7, 18)"
+          }
           pauseOnHover={true}
           speed={20}
         >
