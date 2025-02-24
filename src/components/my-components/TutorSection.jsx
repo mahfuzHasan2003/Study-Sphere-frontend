@@ -13,7 +13,7 @@ const TutorSection = () => {
   );
 
   return (
-    <section className="py-12 max-w-8xl mx-auto px-5 xl:px-0">
+    <section className="py-8 py-12 max-w-8xl mx-auto px-5 xl:px-0">
       <h2 className="text-3xl font-bold text-center">
         🤝Meet Our Expert Tutors
       </h2>

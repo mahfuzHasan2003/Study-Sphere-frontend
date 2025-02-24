@@ -9,7 +9,7 @@ const OngoingSessions = () => {
   );
 
   return (
-    <section className="py-12 max-w-8xl mx-auto px-5 xl:px-0">
+    <section className="py-8 lg:py-12 max-w-8xl mx-auto px-5 xl:px-0">
       <h2 className="text-3xl font-bold text-center">🚀Ongoing Sessions</h2>
       <p className="text-muted-foreground text-center mt-2">
         Join a session to enhance your learning experience.

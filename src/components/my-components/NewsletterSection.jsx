@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 const NewsletterSection = () => {
   return (
-    <section className="py-12 max-w-8xl mx-auto px-5 xl:px-0">
+    <section className="py-8 lg:py-12 max-w-8xl mx-auto px-5 xl:px-0">
       <div className="bg-primary/10 rounded-md px-5 py-12">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4">
