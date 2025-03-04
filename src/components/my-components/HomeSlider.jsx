@@ -69,12 +69,12 @@ const HomeSlider = () => {
       const incomingSlide = `.swiper-slide:nth-child(${
         swiper.activeIndex + swiper.params.slidesPerView
       })`;
-      gsap.fromTo(
+      const tl = gsap.timeline();
+      tl.fromTo(
         incomingSlide,
         { opacity: 0, x: 100, scale: 0.5 },
         { opacity: 1, x: 0, scale: 1, duration: 0.6, ease: "power2.out" }
-      );
-      gsap.fromTo(
+      ).fromTo(
         `${incomingSlide} .slide-item`,
         {
           opacity: 0,
@@ -84,7 +84,6 @@ const HomeSlider = () => {
           opacity: 1,
           y: 0,
           duration: 0.6,
-          delay: 0.2,
           ease: "power2.out",
           stagger: 0.2,
         }
