@@ -2,7 +2,7 @@ import { useFetchForGet } from "@/hooks/useFetchForGet";
 import StudySessionCard from "./StudySessionCard";
 
 const OngoingSessions = () => {
-  const { data: sessions = [] } = useFetchForGet(
+  const { data: sessions = [], isLoading:sessionsLoading } = useFetchForGet(
     "public",
     ["OngoingSessions"],
     "/ongoing-sessions"
@@ -16,7 +16,7 @@ const OngoingSessions = () => {
       </p>
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {sessions.map((session) => (
-          <StudySessionCard key={session._id} session={session} />
+          <StudySessionCard key={session._id} session={session} dataLoading={sessionsLoading} />
         ))}
       </div>
     </section>

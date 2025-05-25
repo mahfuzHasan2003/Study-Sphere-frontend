@@ -4,7 +4,7 @@ import StudySessionCard from "./StudySessionCard";
 import { Link } from "react-router-dom";
 
 const FeaturedSessions = () => {
-  const { data: sessions = [] } = useFetchForGet(
+  const { data: sessions = [], isLoading: sessionsLoading } = useFetchForGet(
     "public",
     ["latestStudySessions"],
     "/featured-sessions"
@@ -18,7 +18,7 @@ const FeaturedSessions = () => {
       </p>
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {sessions.map((session) => (
-          <StudySessionCard key={session._id} session={session} />
+          <StudySessionCard key={session._id} session={session} dataLoading={sessionsLoading} />
         ))}
       </div>
       <div className="text-center mt-5">
