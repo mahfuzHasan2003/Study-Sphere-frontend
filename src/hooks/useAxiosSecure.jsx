@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 const axiosSecure = axios.create({
   baseURL: "https://study-sphere-backend-phi.vercel.app",
+  // baseURL: "http://localhost:3000",
 });
 const useAxiosSecure = () => {
   const navigate = useNavigate();

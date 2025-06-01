@@ -25,6 +25,8 @@ import DashboardWelcome from "@/pages/Dashboard/DashboardWelcome";
 import ErrorPage from "@/pages/Error/ErrorPage";
 import UserProfile from "@/pages/Dashboard/UserProfile";
 import TutorProfile from "@/pages/public/TutorProfile";
+import TrackBalance from "@/pages/Dashboard/Admin/TrackBalance";
+import TutorBalance from "@/pages/Dashboard/Tutor/TutorBalance";
 
 const routes = createBrowserRouter([
   {
@@ -150,6 +152,14 @@ const routes = createBrowserRouter([
           </TutorRoute>
         ),
       },
+      {
+        path: "my-balance",
+        element: (
+          <TutorRoute>
+            <TutorBalance />
+          </TutorRoute>
+        ),
+      },
 
       // ------------ admin routes ------------
       {
@@ -173,6 +183,14 @@ const routes = createBrowserRouter([
         element: (
           <AdminRoute>
             <ManageAllMaterials />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "balance/track",
+        element: (
+          <AdminRoute>
+            <TrackBalance />
           </AdminRoute>
         ),
       },

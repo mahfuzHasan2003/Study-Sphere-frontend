@@ -12,6 +12,7 @@ const CheckoutForm = ({ sessionId, bookedId, session }) => {
    const { theme } = useTheme();
    const [paymentError, setPaymentError] = useState("");
    const [clientSecret, setClientSecret] = useState("");
+   const [tutorStripeId, setTutorStripeId] = useState(null);
    const [paymentLoading, setPaymentLoading] = useState(false);
    const stripe = useStripe();
    const elements = useElements();
@@ -23,22 +24,26 @@ const CheckoutForm = ({ sessionId, bookedId, session }) => {
          sessionId,
       });
       setClientSecret(data.clientSecret);
+      setTutorStripeId(data?.tutorStripeId);
    };
    useEffect(() => {
       createPaymentIntent();
-   }, [createPaymentIntent]);
+   }, []);
    const handleSubmit = async (e) => {
       e.preventDefault();
       setPaymentLoading(true);
+
       if (!stripe || !elements) {
          setPaymentLoading(false);
          return;
       }
+
       const card = elements.getElement(CardElement);
       if (card == null) {
          setPaymentLoading(false);
          return;
       }
+      
       const { error, paymentMethod } = await stripe.createPaymentMethod({
          type: "card",
          card,
